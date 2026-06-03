@@ -147,7 +147,7 @@ function onQuote() {
           @click="openLb(i)"
           @keydown.enter="openLb(i)"
         >
-          <img :src="img.url" :alt="img.alt" :width="img.width" :height="img.height" loading="lazy" decoding="async">
+          <NuxtImg :src="img.url" :alt="img.alt" :width="img.width" :height="img.height" sizes="50vw md:33vw" loading="lazy" />
         </div>
         <button class="gallery__more" @click="openLb(0)"><AppIcon :d="ICONS.image" /> ver todas as {{ gallery.length }} fotos</button>
       </div>

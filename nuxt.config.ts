@@ -28,9 +28,9 @@ export default defineNuxtConfig({
     // Type-checking runs via `npm run typecheck` (vue-tsc), outside the production build.
   },
 
-  // @nuxt/image: optimization for external images (Pexels/randomuser) — see docs/adr/0006.
+  // @nuxt/image (IPX): AVIF/WebP + responsive srcset for the external images.
   image: {
-    domains: ['images.pexels.com', 'randomuser.me', 'picsum.photos', 'fastly.picsum.photos'],
+    domains: ['randomuser.me', 'picsum.photos', 'fastly.picsum.photos'],
     format: ['avif', 'webp'],
   },
 

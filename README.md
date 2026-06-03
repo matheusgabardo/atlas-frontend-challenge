@@ -69,7 +69,7 @@ Destaques técnicos:
 - **Estado na URL**: filtros/ordenação/cidade são compartilháveis e sobrevivem ao refresh; o SSR renderiza a 1ª dobra já filtrada.
 
 ## Performance & Core Web Vitals
-SSR da primeira dobra; imagens com `width/height` (CLS≈0) e `loading="lazy"`; code-split por rota; fontes com `display: swap`. (Observabilidade de Web Vitals é uma evolução planejada.)
+SSR da primeira dobra; imagens via **`@nuxt/image`** (`<NuxtImg>`: AVIF/WebP, `srcset` responsivo, `width/height` → CLS≈0, `loading="lazy"`, e a 1ª dobra `eager`/`fetchpriority="high"` para o LCP); code-split por rota; fontes com `display: swap`. (Observabilidade de Web Vitals é uma evolução planejada.)
 
 ## Acessibilidade
 Foco visível (`:focus-visible`), navegação por teclado nos diálogos (ESC, setas no lightbox), `role`/`aria-*`, contraste AA e `prefers-reduced-motion`.

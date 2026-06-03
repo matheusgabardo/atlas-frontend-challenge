@@ -16,15 +16,15 @@ const isFav = computed(() => favorites.ready && favorites.has(props.item.slug))
 <template>
   <article class="card">
     <div class="card__media">
-      <img
+      <NuxtImg
         :src="item.thumbnail.url"
         :alt="item.thumbnail.alt"
         :width="item.thumbnail.width"
         :height="item.thumbnail.height"
+        sizes="100vw sm:50vw md:33vw lg:25vw"
         :loading="eager ? 'eager' : 'lazy'"
         :fetchpriority="eager ? 'high' : 'auto'"
-        decoding="async"
-      >
+      />
       <span v-if="item.verified" class="badge-verified"><AppIcon :d="ICONS.verified" /> Verificado</span>
       <button
         class="card__fav"

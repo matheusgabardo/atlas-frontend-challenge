@@ -55,12 +55,13 @@ onBeforeUnmount(() => {
         <AppIcon :d="ICONS.arrowL" />
       </button>
       <div class="lightbox__img">
-        <img
+        <NuxtImg
           v-if="images[idx]"
           :src="images[idx]!.url"
           :alt="images[idx]!.alt"
+          sizes="90vw"
           style="max-width: 100%; max-height: 78vh; object-fit: contain; border-radius: var(--r-md)"
-        >
+        />
       </div>
       <button class="lb-nav lb-nav--next" aria-label="Próxima foto" @click="move(1)">
         <AppIcon :d="ICONS.arrowR" />

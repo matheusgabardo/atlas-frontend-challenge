@@ -26,7 +26,7 @@ useHead({ link: [{ rel: 'canonical', href: `${config.public.siteUrl}/` }] })
 // Base params (without page) drive the SSR fetch; "load more" appends extra pages client-side.
 const baseParams = computed(() => serializeCatalogQuery({ ...query.value, page: undefined }))
 
-const { data, pending } = await useAsyncData<CatalogResponse>(
+const { data, pending, error, refresh } = await useAsyncData<CatalogResponse>(
   'catalog',
   () => $fetch('/api/professionals', { query: { ...baseParams.value, page: 1 } }),
   { watch: [baseParams] },
@@ -51,10 +51,14 @@ const hasMore = computed(() => items.value.length < total.value)
 
 async function loadMore() {
   page.value += 1
-  const next = await $fetch<CatalogResponse>('/api/professionals', {
-    query: { ...baseParams.value, page: page.value },
-  })
-  items.value.push(...next.items)
+  try {
+    const next = await $fetch<CatalogResponse>('/api/professionals', {
+      query: { ...baseParams.value, page: page.value },
+    })
+    items.value.push(...next.items)
+  } catch {
+    page.value -= 1 // revert on failure so the button stays usable
+  }
 }
 
 // Search (debounced) → URL.
@@ -264,7 +268,14 @@ function onCity(sel: { city: string; state: string } | null) {
 
         <p class="sr-only" role="status" aria-live="polite">{{ total }} resultados encontrados</p>
 
-        <div v-if="pending && !items.length" class="grid">
+        <div v-if="error && !items.length" class="state">
+          <div class="state__icon"><AppIcon :d="ICONS.empty" /></div>
+          <h3>Não foi possível carregar</h3>
+          <p>Tivemos um problema ao buscar os profissionais.</p>
+          <button class="btn btn--primary" style="margin: 0 auto" @click="refresh()">Tentar de novo</button>
+        </div>
+
+        <div v-else-if="pending && !items.length" class="grid">
           <div v-for="n in 6" :key="n" class="sk">
             <div class="sk__media shimmer" />
             <div class="sk__body">
