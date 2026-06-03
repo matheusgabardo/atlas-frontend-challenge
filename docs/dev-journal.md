@@ -114,3 +114,16 @@
   - *Essência:* ao receber o protótipo do Claude Design (modelo freelancer: DJ, garçom, valet…), notou que ele divergia da v3 técnica e **decidiu seguir o design** (combina com a marca "QuemFaz"). Coerência produto↔design acima do apego ao experimento técnico.
   - ◆ *Padrão (engine genérico):* como `applyQuery`/API/repositório eram genéricos sobre categorias + specs, o pivô custou só **tipos + seed + facetas**, não a arquitetura — retorno de uma engine bem isolada ([ADR-004](./adr/0004-busca-no-servidor.md)).
   - *Validação crítica:* exigiu confirmar o descasamento doc×design **antes** de codar a UI (o README do bundle pedia isso) — evitou construir o modelo errado. Ver [ADR-009](./adr/0009-modelo-freelancers-e-design-system.md).
+
+---
+
+## 2026-06-03 — Polimento de navegação, a11y e identidade
+
+- **Voltar do perfil no ponto exato do card — ADR-010.**
+  - *Essência:* identificou na prática que voltar do perfil "perdia o lugar" numa lista longa e exigiu que o botão voltar devolvesse **exatamente** ao card clicado — pensamento de UX orientado ao fluxo real de quem busca fornecedor, não à tela isolada. Pediu explicitamente para **registrar o problema e como resolvemos**.
+  - ◆ *Padrão (estado de navegação):* `keepalive` na página do catálogo preserva os itens já paginados + DOM; `scrollBehavior(savedPosition)` restaura o offset exato; voltar inteligente (`router.back()` vs `/`) distingue "voltar pra onde eu estava" de "ir pra home". De quebra, corrige o "pulo pro topo" ao trocar filtro.
+  - *Trade-off:* keepalive × reidratar via `sessionStorage` — escolhido keepalive (sem refetch, restauração exata) assumindo o custo irrelevante de memória. Ver [ADR-010](./adr/0010-voltar-catalogo-ponto-exato.md).
+
+- **Select de ordenação acessível + 404 com identidade QuemFaz.**
+  - *Essência:* preferiu trocar o `<select>` nativo por um custom acessível e personalizar o 404 com a marca — acabamento e identidade, não só função.
+  - *IA:* implementou o listbox (teclado/`aria-activedescendant`/foco) e a página de erro reaproveitando os tokens do design.
