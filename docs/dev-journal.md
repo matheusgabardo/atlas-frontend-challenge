@@ -105,3 +105,12 @@
   - ◆ *Padrão (build-no-CI):* o recon expôs um servidor de **512 MB RAM / 3,5 GB disco** — não builda Nuxt. Decisão: build no **CI** (Linux, resolve `sharp-linux`) → **GHCR** → servidor só faz `pull`. Servidor "burro", deploy reproduzível.
   - *Resultado:* app **no ar em https://quemfazeventos.com.br** (Cloudflare TLS → Nginx 443 → container Nitro :3000); pipeline manual validado ponta-a-ponta; CI/CD (Actions → GHCR → SSH) pronto, aguardando os 3 secrets. Imagem 269 MB · runtime ~65 MB. Ver [ADR-008](./adr/0008-deploy-docker-servidor.md).
   - *IA:* fez o recon do servidor, escreveu Dockerfile/compose/Nginx/workflows e executou instalação + deploy via SSH — sob direção e validação do Matheus.
+
+---
+
+## 2026-06-03 — Pivô de modelo: freelancers (alinhado ao Claude Design)
+
+- **Implementar o design entregue → o modelo virou freelancer.**
+  - *Essência:* ao receber o protótipo do Claude Design (modelo freelancer: DJ, garçom, valet…), notou que ele divergia da v3 técnica e **decidiu seguir o design** (combina com a marca "QuemFaz"). Coerência produto↔design acima do apego ao experimento técnico.
+  - ◆ *Padrão (engine genérico):* como `applyQuery`/API/repositório eram genéricos sobre categorias + specs, o pivô custou só **tipos + seed + facetas**, não a arquitetura — retorno de uma engine bem isolada ([ADR-004](./adr/0004-busca-no-servidor.md)).
+  - *Validação crítica:* exigiu confirmar o descasamento doc×design **antes** de codar a UI (o README do bundle pedia isso) — evitou construir o modelo errado. Ver [ADR-009](./adr/0009-modelo-freelancers-e-design-system.md).

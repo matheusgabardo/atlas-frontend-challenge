@@ -9,3 +9,5 @@ Decisões curtas no formato Contexto / Decisão / Consequências. Escritas no mo
 - [ADR-005 — Favoritos em localStorage (client-only)](./0005-favoritos-localstorage.md)
 - [ADR-006 — Dados em build-time, JSON commitado (reprodutível sem chave)](./0006-dados-build-time.md)
 - [ADR-007 — Estado: URL como fonte de verdade + Pinia só como cache](./0007-estado-url-pinia.md)
+- [ADR-008 — Deploy Docker no servidor + Nginx + Cloudflare](./0008-deploy-docker-servidor.md)
+- [ADR-009 — Modelo freelancers de eventos + adoção do design-system](./0009-modelo-freelancers-e-design-system.md)

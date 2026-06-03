@@ -3,7 +3,7 @@
 > Documento vivo. Consolida objetivo, princípios, fluxo de trabalho, roadmap, arquitetura e o mapeamento dos requisitos da vaga ao teste. Outros documentos relacionados: [`business-rules.md`](./business-rules.md), [`dev-journal.md`](./dev-journal.md), [`AI_USAGE.md`](./AI_USAGE.md), `adr/` (decisões).
 
 ## 1. Objetivo
-App **Nuxt 4 + Vue 3 + TypeScript** de catálogo/listagem de **fornecedores de estrutura técnica para eventos** — som, luz, LED, projeção, palco e energia (≥ 500), com busca, filtros, ordenação, carregamento sob demanda e perfil detalhado. **Nicho v3** (estreitado de "eventos em geral"): 6 categorias com **specs técnicas como facetas** — profundidade defensável (background real em áudio/eventos) em vez de amplitude rasa. Foco da avaliação: organização, componentização, decisões técnicas, performance/Core Web Vitals e UX. Detalhes em [`business-rules.md`](./business-rules.md).
+App **Nuxt 4 + Vue 3 + TypeScript** — catálogo/listagem de **freelancers de eventos** (DJ, som, luz, foto, garçom/bar, recepção, segurança, cerimonial, valet; ≥ 500), com busca, **busca facetada** (facetas contextuais por categoria), ordenação, carregamento sob demanda e perfil detalhado. Modelo alinhado ao protótipo do **Claude Design** (ver [ADR-009](./adr/0009-modelo-freelancers-e-design-system.md)). Foco da avaliação: organização, componentização, decisões técnicas, performance/Core Web Vitals e UX. Detalhes em [`business-rules.md`](./business-rules.md).
 
 ## 2. Princípios
 1. **O challenge tem prioridade absoluta.** Diferenciais da vaga só entram quando não comprometem o escopo mínimo nem a qualidade.
@@ -42,7 +42,7 @@ Legenda: **P0** = exigido pelo challenge · **P1** = diferencial da vaga (baixo 
 ## 5. Arquitetura técnica
 - **Camada de dados:** JSON gerado por script (seed determinística + dados de APIs públicas cacheados) → servido por **Nitro server routes** (`/api/professionals`, `/api/professionals/[slug]`, `/api/facets`). Filtro/ordenação/paginação **no servidor**. O front consome essa API (demonstra "consumo de APIs").
 - **Estado:** URL como **fonte de verdade** dos filtros (compartilhável/SSR); store **Pinia** guarda **só** cache de resultados, loading e cursor — nunca filtros (fluxo unidirecional, [ADR-007](./adr/0007-estado-url-pinia.md)).
-- **Modelo:** entidade `Professional` (= fornecedor, `providerType`) com **`TechSpecs` (discriminated union por categoria)** → vira **busca facetada** (filtros contextuais), o principal diferencial de modelagem/UX.
+- **Modelo:** entidade `Professional` (freelancer/equipe, `providerType`) com **`specs` + facetas contextuais por categoria** (`CONTEXTUAL_FACETS`) → **busca facetada**, o principal diferencial de modelagem/UX.
 - **Componentização:** `components/ui` (base/design system), `components/catalog`, `components/professional`, `components/layout`. Lógica em **composables** (`useProfessionals`, `useCatalogQuery`, `useInfiniteScroll`, `useLightbox`). Tipos em `shared/types`.
 - **Estilo:** Tailwind v4 + design tokens (`@theme`) + componentes próprios (sem lib de UI).
 
