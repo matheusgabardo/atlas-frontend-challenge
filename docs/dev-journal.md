@@ -94,3 +94,14 @@
   - *Risco consciente:* a IA alertou que já existe um "QuemFaz" ativo (marketplace de serviços locais, Batatais/SP) em ramo adjacente — risco real de colisão de marca (INPI classe 35/41). O Matheus optou por seguir; **validar no INPI antes de registrar a marca**.
   - ◆ *Padrão (branding):* nome de **intermediário** evoca o encontro/a busca, não a execução; e marca forte troca a *mecânica* ("conecta X") por *intenção/metáfora* — daí "QuemFaz" (a pergunta do cliente) e o vice "garimpaeventos" (a metáfora).
   - *IA:* gerou/agrupou ~500 nomes via workflows multi-agente (fan-out por ângulo) e fez a checagem de colisão que levantou o xará — IA como motor de divergência + due diligence.
+
+---
+
+## 2026-06-03 — Ambiente de deploy (Docker + CI/CD) antes da app
+
+- **De-riscar o deploy cedo (o maior risco do projeto).**
+  - *Essência:* decidiu montar todo o pipeline de deploy **com a app ainda em esqueleto** — atacando o gap nº1 da revisão (entregabilidade), em vez de empurrar o deploy pra última fase. Mentalidade de risco/qualidade de sênior.
+  - *Essência:* manteve **Docker no servidor próprio** (recusou Vercel) para dominar o ciclo build/deploy/manutenção, pedindo "ir devagar e entender cada passo".
+  - ◆ *Padrão (build-no-CI):* o recon expôs um servidor de **512 MB RAM / 3,5 GB disco** — não builda Nuxt. Decisão: build no **CI** (Linux, resolve `sharp-linux`) → **GHCR** → servidor só faz `pull`. Servidor "burro", deploy reproduzível.
+  - *Resultado:* app **no ar em https://quemfazeventos.com.br** (Cloudflare TLS → Nginx 443 → container Nitro :3000); pipeline manual validado ponta-a-ponta; CI/CD (Actions → GHCR → SSH) pronto, aguardando os 3 secrets. Imagem 269 MB · runtime ~65 MB. Ver [ADR-008](./adr/0008-deploy-docker-servidor.md).
+  - *IA:* fez o recon do servidor, escreveu Dockerfile/compose/Nginx/workflows e executou instalação + deploy via SSH — sob direção e validação do Matheus.

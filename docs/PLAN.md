@@ -35,8 +35,8 @@ Legenda: **P0** = exigido pelo challenge · **P1** = diferencial da vaga (baixo 
 | 8 | Performance, A11y + observabilidade Web Vitals | P0/P1 |
 | 9 | Testes (Vitest unit + component) | P0/P1 |
 | 10 | Storybook / Design System | P1 |
-| 11 | CI GitHub Actions (lint/test/build) | P1 |
-| 12 | Docker dev + prod + deploy (ssh mgmdev) | P1 (Docker é opcional no challenge) |
+| 11 | CI GitHub Actions (lint/test/build) | P1 ✅ (workflow pronto; secrets pendentes) |
+| 12 | Docker + deploy no servidor (ssh mgmdev) + Nginx + TLS Cloudflare | P1 ✅ **no ar: quemfazeventos.com.br** |
 | 13 | README + ADRs + AI_USAGE + roteiro do vídeo | P0 |
 
 ## 5. Arquitetura técnica

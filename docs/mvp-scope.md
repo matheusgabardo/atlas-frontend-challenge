@@ -20,7 +20,7 @@
 - **Lightbox** de fotos · **Favoritos** (localStorage) + `/favoritos`
 - **Data do evento**: filtro simples (engine pronta), UI mínima
 - A11y básica · **testes Vitest** · Conventional Commits · ADRs · README · AI_USAGE
-- **CI** (lint/test/build) + **Web Vitals** (baratos) · **Deploy** (link publicado)
+- **CI** (lint/test/build) ✅ · **Web Vitals** (baratos) · **Deploy** ✅ no ar em quemfazeventos.com.br (Docker + Nginx + Cloudflare)
 
 ## Fora do MVP → futuro (`dados_privados/produto-futuro.md`)
 Cobertura nacional completa (IBGE 5570 + coords) · geolocalização · "meu evento"/carrinho · comparação lado a lado · mapa · contas/auth · dashboard fornecedor · pós-orçamento (notificação/tracking/chat) · modelo de negócio · enriquecimento real de dados · agenda/booking real · **Storybook** (só se sobrar tempo).
