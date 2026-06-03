@@ -27,6 +27,8 @@
 }
 .pf-back:hover { border-color: var(--line-2); color: var(--text); }
 .pf-back svg { width: 16px; height: 16px; }
+/* Relocated above the breadcrumb (top-left of the content). */
+.pf-back--top { margin-bottom: var(--sp-4); }
 .favbtn {
   position: relative; width: 42px; height: 42px; border-radius: var(--r-full);
   background: var(--surface); border: 1px solid var(--line);
@@ -170,6 +172,7 @@
   .pf-header { padding: 0 var(--sp-4); }
   .brand__name { display: none; }
   .pf-back span { display: none; }
+  .pf-back--top span { display: inline; } /* room above the breadcrumb → keep the label */
   .gallery { grid-template-columns: 1fr 1fr; grid-template-rows: 160px 120px; height: auto; }
   .gallery__cell:first-child { grid-row: span 1; grid-column: span 2; }
   .gallery__cell:nth-child(n+4) { display: none; }
