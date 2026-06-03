@@ -1,8 +1,14 @@
 // Presentation helpers shared by server and client. Locale is fixed to pt-BR so SSR and
 // client render identically (no hydration mismatch).
 
-import type { PriceModel, Professional, ProfessionalListItem } from '../types/professional'
+import type { MediaAsset, PriceModel, Professional, ProfessionalListItem } from '../types/professional'
 import { PRICE_MODEL_LABEL } from './labels'
+
+// Picsum serves the requested size in the URL; ask for a card-sized image (fewer bytes, better LCP).
+function cardThumbnail(asset: MediaAsset): MediaAsset {
+  if (!asset.url.includes('picsum.photos')) return asset
+  return { ...asset, url: asset.url.replace(/\/\d+\/\d+$/, '/480/320'), width: 480, height: 320 }
+}
 
 const brl = new Intl.NumberFormat('pt-BR', {
   style: 'currency',
@@ -37,6 +43,6 @@ export function toListItem(p: Professional, distanceKm?: number): ProfessionalLi
     distanceKm,
     verified: p.verified,
     galleryCount: p.gallery.length,
-    thumbnail: p.gallery[0]!,
+    thumbnail: cardThumbnail(p.gallery[0]!),
   }
 }

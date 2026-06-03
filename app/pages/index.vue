@@ -272,7 +272,7 @@ function onCity(sel: { city: string; state: string } | null) {
 
         <template v-else>
           <div class="grid">
-            <ProviderCard v-for="item in items" :key="item.id" :item="item" @photos="onPhotos" />
+            <ProviderCard v-for="(item, i) in items" :key="item.id" :item="item" :eager="i < 4" @photos="onPhotos" />
           </div>
           <div class="loadmore">
             <button v-if="hasMore" class="btn btn--ghost" @click="loadMore">

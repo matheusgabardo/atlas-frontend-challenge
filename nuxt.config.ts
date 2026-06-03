@@ -44,14 +44,21 @@ export default defineNuxtConfig({
   app: {
     head: {
       htmlAttrs: { lang: 'pt-BR' },
-      title: 'QuemFaz Eventos — estrutura técnica para o seu evento',
+      title: 'QuemFaz Eventos — freelancers para o seu evento',
       meta: [
         { name: 'viewport', content: 'width=device-width, initial-scale=1' },
         {
           name: 'description',
           content:
-            'Encontre e contrate fornecedores de estrutura técnica para o seu evento: som, iluminação, painel de LED, palco, projeção e energia.',
+            'Encontre e contrate freelancers de eventos por cidade: DJ, som, iluminação, fotografia, garçom & bar, recepção, segurança, cerimonial e valet.',
         },
+      ],
+      link: [
+        { rel: 'icon', href: '/favicon/favicon.ico', sizes: 'any' },
+        { rel: 'icon', type: 'image/png', sizes: '32x32', href: '/favicon/favicon-32x32.png' },
+        { rel: 'icon', type: 'image/png', sizes: '16x16', href: '/favicon/favicon-16x16.png' },
+        { rel: 'apple-touch-icon', href: '/favicon/apple-touch-icon.png' },
+        { rel: 'manifest', href: '/favicon/site.webmanifest' },
       ],
       // Apply the persisted theme before paint to avoid a flash (light/dark).
       script: [

@@ -5,7 +5,7 @@ import { formatBRL } from '~~/shared/catalog/format'
 import { PRICE_MODEL_LABEL } from '~~/shared/catalog/labels'
 import { ICONS } from '~/utils/icons'
 
-const props = defineProps<{ item: ProfessionalListItem }>()
+const props = defineProps<{ item: ProfessionalListItem; eager?: boolean }>()
 const emit = defineEmits<{ photos: [string]; quote: [string] }>()
 
 const favorites = useFavoritesStore()
@@ -21,7 +21,8 @@ const isFav = computed(() => favorites.ready && favorites.has(props.item.slug))
         :alt="item.thumbnail.alt"
         :width="item.thumbnail.width"
         :height="item.thumbnail.height"
-        loading="lazy"
+        :loading="eager ? 'eager' : 'lazy'"
+        :fetchpriority="eager ? 'high' : 'auto'"
         decoding="async"
       >
       <span v-if="item.verified" class="badge-verified"><AppIcon :d="ICONS.verified" /> Verificado</span>
