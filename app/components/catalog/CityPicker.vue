@@ -31,6 +31,7 @@ function pick(city: string, uf: string) {
   emit('close')
 }
 const root = ref<HTMLElement>()
+useFocusTrap(() => props.open, root)
 function onKeydown(e: KeyboardEvent) {
   if (props.open && e.key === 'Escape') emit('close')
 }

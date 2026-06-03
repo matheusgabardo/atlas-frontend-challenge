@@ -12,6 +12,8 @@ const form = reactive({ name: '', email: '', phone: '', date: '', pax: '', msg: 
 const errors = reactive({ name: false, email: false, msg: false })
 const submitting = ref(false)
 const success = ref(false)
+const panel = ref<HTMLElement>()
+useFocusTrap(() => props.open, panel)
 
 const title = computed(() =>
   props.single ? 'Solicitar orçamento' : `Orçamento de ${props.batchCount} profissionais`,
@@ -65,7 +67,7 @@ onBeforeUnmount(() => {
     aria-labelledby="quoteTitle"
     @mousedown.self="emit('close')"
   >
-    <div class="dialog">
+    <div ref="panel" class="dialog">
       <div class="dialog__head">
         <div>
           <h2 id="quoteTitle">{{ title }}</h2>

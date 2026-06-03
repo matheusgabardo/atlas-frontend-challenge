@@ -8,6 +8,8 @@ const emit = defineEmits<{ close: [] }>()
 const idx = ref(props.start ?? 0)
 const total = computed(() => props.images.length)
 const closeBtn = ref<HTMLButtonElement>()
+const panel = ref<HTMLElement>()
+useFocusTrap(() => props.open, panel)
 
 function move(delta: number) {
   if (!total.value) return
@@ -40,7 +42,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div class="lightbox" :data-open="open" role="dialog" aria-modal="true" aria-label="Galeria de fotos">
+  <div ref="panel" class="lightbox" :data-open="open" role="dialog" aria-modal="true" aria-label="Galeria de fotos">
     <div class="lightbox__bar">
       <span class="lightbox__counter">{{ title }}</span>
       <span class="lightbox__counter">foto {{ idx + 1 }} de {{ total }}</span>

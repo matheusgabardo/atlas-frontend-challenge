@@ -5,6 +5,9 @@ import { ICONS } from '~/utils/icons'
 const props = defineProps<{ open: boolean; facets?: CatalogFacets }>()
 const emit = defineEmits<{ close: [] }>()
 
+const panel = ref<HTMLElement>()
+useFocusTrap(() => props.open, panel)
+
 function onKeydown(e: KeyboardEvent) {
   if (props.open && e.key === 'Escape') emit('close')
 }
@@ -25,7 +28,7 @@ onBeforeUnmount(() => {
 
 <template>
   <div class="overlay" :data-open="open" role="dialog" aria-modal="true" aria-label="Filtros" @mousedown.self="emit('close')">
-    <div class="dialog">
+    <div ref="panel" class="dialog">
       <div class="dialog__head">
         <div><h2>Filtros</h2></div>
         <button class="dialog__close" aria-label="Fechar filtros" @click="emit('close')"><AppIcon :d="ICONS.x" /></button>
