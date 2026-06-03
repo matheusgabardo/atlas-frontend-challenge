@@ -6,9 +6,9 @@
   position: fixed; inset: 0; z-index: 100;
   background: var(--overlay-bg); backdrop-filter: blur(4px);
   display: grid; place-items: center; padding: var(--sp-6);
-  opacity: 0; pointer-events: none; transition: opacity .2s;
+  opacity: 0; visibility: hidden; pointer-events: none; transition: opacity .2s, visibility .2s;
 }
-.overlay[data-open="true"] { opacity: 1; pointer-events: auto; }
+.overlay[data-open="true"] { opacity: 1; visibility: visible; pointer-events: auto; }
 
 .dialog {
   background: var(--bg-2); border: 1px solid var(--line); border-radius: var(--r-xl);

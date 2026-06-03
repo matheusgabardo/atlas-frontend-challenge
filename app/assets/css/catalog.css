@@ -182,7 +182,17 @@
   border-radius: var(--r-md); color: var(--text); font-size: var(--fs-sm); cursor: pointer;
 }
 .sortsel:hover { border-color: var(--line-2); }
-.btn-filters { display: none; }
+.btn-filters {
+  display: inline-flex; align-items: center; gap: var(--sp-2); height: 40px; padding: 0 var(--sp-4);
+  background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-md);
+  font-weight: 600; font-size: var(--fs-sm); position: relative;
+}
+.btn-filters:hover { border-color: var(--line-2); }
+.btn-filters svg { width: 16px; height: 16px; }
+.btn-filters__badge {
+  background: var(--primary); color: var(--on-primary); border-radius: var(--r-full);
+  min-width: 18px; height: 18px; font-size: 11px; font-weight: 700; display: grid; place-items: center; padding: 0 4px;
+}
 
 /* Chips ativos */
 .chips { display: flex; flex-wrap: wrap; gap: var(--sp-2); margin-bottom: var(--sp-5); align-items: center; }

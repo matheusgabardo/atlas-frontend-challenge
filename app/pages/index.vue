@@ -17,6 +17,12 @@ const { query, update, reset } = useCatalogQuery()
 const favorites = useFavoritesStore()
 const { toggle: toggleTheme } = useTheme()
 
+// SEO: faceted URLs canonicalize to the base and are noindex when any filter is active.
+const route = useRoute()
+const config = useRuntimeConfig()
+useSeoMeta({ robots: () => (Object.keys(route.query).length ? 'noindex, follow' : 'index, follow') })
+useHead({ link: [{ rel: 'canonical', href: `${config.public.siteUrl}/` }] })
+
 // Base params (without page) drive the SSR fetch; "load more" appends extra pages client-side.
 const baseParams = computed(() => serializeCatalogQuery({ ...query.value, page: undefined }))
 
@@ -58,6 +64,13 @@ watch(searchText, (v) => {
   clearTimeout(searchTimer)
   searchTimer = setTimeout(() => update({ q: v || undefined }), 200)
 })
+// Keep the input in sync when the URL changes externally (back/forward, shared link).
+watch(
+  () => query.value.q,
+  (v) => {
+    if ((v ?? '') !== searchText.value) searchText.value = v ?? ''
+  },
+)
 
 function catCount(slug: string): number {
   return facets.value?.categories.find((c) => c.value === slug)?.count ?? 0
