@@ -46,4 +46,17 @@ describe('queryParams', () => {
     expect(q.page).toBeUndefined()
     expect(q.city).toBeUndefined()
   })
+
+  // Guards the keepalive fetch key (docs/adr/0010): the catalog watches a STRING key
+  // derived from serializeCatalogQuery, so navigating back to an identical URL must
+  // produce an identical string and NOT re-trigger the fetch (which would reset the
+  // accumulated "load more" pages). Different content must yield a different key.
+  it('serializes equal queries to an identical, stable string key', () => {
+    const a: CatalogQuery = { categories: ['dj', 'som'], city: 'São Paulo', sort: 'preco-asc' }
+    const b: CatalogQuery = { categories: ['dj', 'som'], city: 'São Paulo', sort: 'preco-asc' }
+    expect(JSON.stringify(serializeCatalogQuery(a))).toBe(JSON.stringify(serializeCatalogQuery(b)))
+
+    const c: CatalogQuery = { categories: ['dj'], city: 'São Paulo', sort: 'preco-asc' }
+    expect(JSON.stringify(serializeCatalogQuery(a))).not.toBe(JSON.stringify(serializeCatalogQuery(c)))
+  })
 })

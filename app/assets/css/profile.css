@@ -23,6 +23,7 @@
   display: inline-flex; align-items: center; gap: var(--sp-2); height: 42px; padding: 0 var(--sp-4);
   border-radius: var(--r-full); border: 1px solid var(--line); background: var(--surface);
   font-size: var(--fs-sm); font-weight: 600; color: var(--text-2);
+  font-family: inherit; cursor: pointer;
 }
 .pf-back:hover { border-color: var(--line-2); color: var(--text); }
 .pf-back svg { width: 16px; height: 16px; }

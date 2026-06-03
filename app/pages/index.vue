@@ -11,6 +11,8 @@ import type {
 } from '~~/shared/types'
 import { ICONS } from '~/utils/icons'
 
+definePageMeta({ keepalive: true })
+
 useHead({ title: 'QuemFaz Eventos — encontre profissionais para o seu evento' })
 
 const { query, update, reset } = useCatalogQuery()
@@ -25,11 +27,16 @@ useHead({ link: [{ rel: 'canonical', href: `${config.public.siteUrl}/` }] })
 
 // Base params (without page) drive the SSR fetch; "load more" appends extra pages client-side.
 const baseParams = computed(() => serializeCatalogQuery({ ...query.value, page: undefined }))
+// Watch a STABLE string key, not the object. serializeCatalogQuery returns a fresh
+// object on every recompute, so watching it by reference would refetch — and reset
+// the accumulated "load more" pages — on every popstate/back to an identical URL,
+// silently defeating keepalive. The string only changes on a real query (docs/adr/0010).
+const baseKey = computed(() => JSON.stringify(baseParams.value))
 
 const { data, pending, error, refresh } = await useAsyncData<CatalogResponse>(
   'catalog',
   () => $fetch('/api/professionals', { query: { ...baseParams.value, page: 1 } }),
-  { watch: [baseParams] },
+  { watch: [baseKey] },
 )
 
 const items = ref<CatalogResponse['items']>([])
@@ -167,6 +174,24 @@ const chips = computed(() => {
 
 onMounted(() => favorites.load())
 
+// Returning from a profile: briefly highlight the card that was opened (docs/adr/0010).
+// The catalog is kept alive, so the list (incl. extra "load more" pages) and the scroll
+// position survive; we only flag the card for orientation, respecting reduced motion.
+const { consume } = useCatalogReturn()
+const returningSlug = ref<string | null>(null)
+let returnTimer: ReturnType<typeof setTimeout> | undefined
+function flagReturn() {
+  const slug = consume()
+  if (!slug) return
+  returningSlug.value = slug
+  clearTimeout(returnTimer)
+  returnTimer = setTimeout(() => {
+    if (returningSlug.value === slug) returningSlug.value = null
+  }, 1800)
+}
+onActivated(flagReturn)
+onBeforeUnmount(() => clearTimeout(returnTimer))
+
 function clearAll() {
   reset()
   searchText.value = ''
@@ -297,7 +322,14 @@ function onCity(sel: { city: string; state: string } | null) {
 
         <template v-else>
           <div class="grid">
-            <ProviderCard v-for="(item, i) in items" :key="item.id" :item="item" :eager="i < 4" @photos="onPhotos" />
+            <ProviderCard
+              v-for="(item, i) in items"
+              :key="item.id"
+              :item="item"
+              :eager="i < 4"
+              :highlight="item.slug === returningSlug"
+              @photos="onPhotos"
+            />
           </div>
           <div class="loadmore">
             <button v-if="hasMore" class="btn btn--ghost" @click="loadMore">

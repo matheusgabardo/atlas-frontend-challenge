@@ -221,6 +221,19 @@
 }
 .card:hover { border-color: var(--line-2); transform: translateY(-2px); box-shadow: var(--shadow-md); }
 .card:focus-within { border-color: var(--primary); }
+/* Returning from a profile: briefly outline the card that was opened (docs/adr/0010). */
+.card.is-returning {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+  animation: card-return 1.8s ease-out forwards;
+}
+@keyframes card-return {
+  0%, 25% { outline-color: var(--primary); }
+  100% { outline-color: transparent; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .card.is-returning { animation: none; }
+}
 
 .card__media { position: relative; aspect-ratio: 16 / 10; background: var(--bg-2); overflow: hidden; }
 .ph {

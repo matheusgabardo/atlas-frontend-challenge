@@ -5,16 +5,21 @@ import { formatBRL } from '~~/shared/catalog/format'
 import { PRICE_MODEL_LABEL } from '~~/shared/catalog/labels'
 import { ICONS } from '~/utils/icons'
 
-const props = defineProps<{ item: ProfessionalListItem; eager?: boolean }>()
+const props = defineProps<{ item: ProfessionalListItem; eager?: boolean; highlight?: boolean }>()
 const emit = defineEmits<{ photos: [string]; quote: [string] }>()
 
 const favorites = useFavoritesStore()
+// Remember which card was opened so the catalog can highlight it on return (docs/adr/0010).
+const { remember } = useCatalogReturn()
+function onOpen() {
+  remember(props.item.slug)
+}
 // Render the heart state only after hydration to avoid a mismatch (localStorage is client-only).
 const isFav = computed(() => favorites.ready && favorites.has(props.item.slug))
 </script>
 
 <template>
-  <article class="card">
+  <article class="card" :class="{ 'is-returning': highlight }">
     <div class="card__media">
       <NuxtImg
         :src="item.thumbnail.url"
@@ -44,7 +49,7 @@ const isFav = computed(() => favorites.ready && favorites.has(props.item.slug))
         {{ CATEGORY_LABEL(item.category) }}<span class="card__type">{{ PROVIDER_TYPES[item.providerType] }}</span>
       </div>
       <h3 class="card__name">
-        <NuxtLink :to="`/profissional/${item.slug}`">{{ item.name }}</NuxtLink>
+        <NuxtLink :to="`/profissional/${item.slug}`" @click="onOpen">{{ item.name }}</NuxtLink>
       </h3>
       <div class="specs">
         <span v-for="s in item.keySpecs" :key="s" class="spec">{{ s }}</span>
@@ -63,7 +68,7 @@ const isFav = computed(() => favorites.ready && favorites.has(props.item.slug))
         <div class="price">
           <small>a partir de</small><b>{{ formatBRL(item.priceFrom) }}</b><em>/ {{ PRICE_MODEL_LABEL[item.priceModel] }}</em>
         </div>
-        <NuxtLink class="btn btn--primary" :to="`/profissional/${item.slug}`">Ver mais detalhes</NuxtLink>
+        <NuxtLink class="btn btn--primary" :to="`/profissional/${item.slug}`" @click="onOpen">Ver mais detalhes</NuxtLink>
       </div>
     </div>
   </article>
