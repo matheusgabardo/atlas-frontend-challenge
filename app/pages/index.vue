@@ -112,12 +112,12 @@ async function onPhotos(id: string) {
 }
 
 // Batch quote from favorites.
-const quoteOpen = ref(false)
-function openFavQuote() {
-  if (favorites.count) quoteOpen.value = true
-}
-
 const filtersOpen = ref(false)
+
+const cityOpen = ref(false)
+function onCity(sel: { city: string; state: string } | null) {
+  update(sel ? { city: sel.city, state: sel.state } : { city: undefined, state: undefined })
+}
 </script>
 
 <template>
@@ -143,17 +143,19 @@ const filtersOpen = ref(false)
           <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4" /><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" /></svg>
           <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A8.5 8.5 0 1 1 11.2 3a6.5 6.5 0 0 0 9.8 9.8z" /></svg>
         </button>
-        <button class="citybtn" aria-haspopup="listbox">
+        <button class="citybtn" aria-haspopup="listbox" :aria-expanded="cityOpen" @click="cityOpen = !cityOpen">
           <AppIcon :d="ICONS.pin" />
           <span class="city-label">{{ cityLabel }}</span>
           <AppIcon class="chev" :d="ICONS.chev" />
         </button>
-        <button class="favbtn" aria-label="Solicitar orçamento dos favoritos" @click="openFavQuote">
+        <NuxtLink class="favbtn" to="/favoritos" aria-label="Favoritos">
           <AppIcon :d="ICONS.heart" fill />
           <span v-if="favorites.ready && favorites.count" class="favbtn__count">{{ favorites.count }}</span>
-        </button>
+        </NuxtLink>
       </div>
     </header>
+
+    <CityPicker :open="cityOpen" :current="query.city" @close="cityOpen = false" @select="onCity" />
 
     <div class="filterbar">
       <div class="filterbar__inner">
@@ -234,6 +236,5 @@ const filtersOpen = ref(false)
 
     <FiltersDialog :open="filtersOpen" :facets="facets" @close="filtersOpen = false" />
     <Lightbox :open="lbOpen" :images="lbImages" :title="lbTitle" @close="lbOpen = false" />
-    <QuoteModal :open="quoteOpen" :batch-count="favorites.count" @close="quoteOpen = false" />
   </div>
 </template>

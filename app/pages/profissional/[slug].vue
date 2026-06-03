@@ -27,7 +27,7 @@ const initials = computed(() =>
     .toUpperCase(),
 )
 
-const isFav = computed(() => favorites.ready && favorites.has(p.value.id))
+const isFav = computed(() => favorites.ready && favorites.has(p.value.slug))
 
 const specRows = computed<[string, string][]>(() => {
   const rows: [string, string][] = []
@@ -226,7 +226,7 @@ function onQuote() {
             </div>
             <div class="booking__actions">
               <button class="btn btn--primary btn--block" @click="onQuote">Solicitar orçamento</button>
-              <button class="btn btn--ghost btn--block" :aria-pressed="isFav" @click="favorites.toggle(p.id)">
+              <button class="btn btn--ghost btn--block" :aria-pressed="isFav" @click="favorites.toggle(p.slug)">
                 <AppIcon :d="ICONS.heart" fill /> <span>{{ isFav ? 'Salvo nos favoritos' : 'Adicionar aos favoritos' }}</span>
               </button>
             </div>

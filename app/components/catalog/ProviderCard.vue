@@ -10,7 +10,7 @@ const emit = defineEmits<{ photos: [string]; quote: [string] }>()
 
 const favorites = useFavoritesStore()
 // Render the heart state only after hydration to avoid a mismatch (localStorage is client-only).
-const isFav = computed(() => favorites.ready && favorites.has(props.item.id))
+const isFav = computed(() => favorites.ready && favorites.has(props.item.slug))
 </script>
 
 <template>
@@ -29,7 +29,7 @@ const isFav = computed(() => favorites.ready && favorites.has(props.item.id))
         class="card__fav"
         :aria-pressed="isFav"
         :aria-label="isFav ? 'Remover dos favoritos' : 'Adicionar aos favoritos'"
-        @click="favorites.toggle(item.id)"
+        @click="favorites.toggle(item.slug)"
       >
         <AppIcon :d="ICONS.heart" fill />
       </button>
