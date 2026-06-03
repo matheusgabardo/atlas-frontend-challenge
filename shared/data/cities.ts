@@ -5,9 +5,12 @@
 // Best-effort IBGE codes and approximate city-center coordinates — good enough for relative
 // distance. The full national municipality list (combobox) is a later step (see roadmap #10).
 
-import type { Location } from '../types/professional'
-
-export interface SeedCity extends Location {
+export interface SeedCity {
+  state: string
+  city: string
+  ibgeCode: string
+  lat: number
+  lng: number
   weight: number
 }
 
@@ -54,3 +57,14 @@ export const CITIES: SeedCity[] = [
 export const CITY_BY_IBGE: Record<string, SeedCity> = Object.fromEntries(
   CITIES.map((c) => [c.ibgeCode, c]),
 )
+
+/** Lookup by `${state}:${city}` — used to resolve the reference city for distance. */
+export const CITY_BY_KEY: Record<string, SeedCity> = Object.fromEntries(
+  CITIES.map((c) => [`${c.state}:${c.city}`, c]),
+)
+
+/** States (UF) → city names, for the city picker. Derived from the curated city set. */
+export const STATES: Record<string, string[]> = CITIES.reduce<Record<string, string[]>>((acc, c) => {
+  ;(acc[c.state] ??= []).push(c.city)
+  return acc
+}, {})

@@ -3,13 +3,11 @@
 // symmetric lets us round-trip-test the URL state.
 
 import { CATEGORY_SLUGS, type CategorySlug } from '../types/category'
-import type { CapacityTier } from '../types/specs'
 import { SORT_OPTIONS, type CatalogQuery, type SortOption } from '../types/query'
 
-type ParamValue = string | string[] | null | undefined
+// Aceita o shape do `route.query` do vue-router (valores podem ser null e arrays podem conter null).
+type ParamValue = string | (string | null)[] | null | undefined
 type Params = Record<string, ParamValue>
-
-const TIERS: readonly string[] = ['pequeno', 'medio', 'grande', 'open-air']
 
 function first(v: ParamValue): string | undefined {
   const s = Array.isArray(v) ? v[0] : v
@@ -28,14 +26,8 @@ function bool(v: ParamValue): boolean | undefined {
 }
 function list(v: ParamValue): string[] | undefined {
   if (v == null) return undefined
-  const arr = (Array.isArray(v) ? v : String(v).split(',')).map((s) => s.trim()).filter(Boolean)
+  const arr = (Array.isArray(v) ? v : String(v).split(',')).map((s) => (s ?? '').trim()).filter(Boolean)
   return arr.length ? arr : undefined
-}
-function coerce(s: string): string | number | boolean {
-  if (/^-?\d+(\.\d+)?$/.test(s)) return Number(s)
-  if (s === 'true') return true
-  if (s === 'false') return false
-  return s
 }
 
 export function parseCatalogQuery(params: Params): CatalogQuery {
@@ -44,14 +36,17 @@ export function parseCatalogQuery(params: Params): CatalogQuery {
   )
   const sortRaw = first(params.sort)
   const sort = SORT_OPTIONS.includes(sortRaw as SortOption) ? (sortRaw as SortOption) : undefined
-  const tierRaw = first(params.capacityTier)
-  const capacityTier = TIERS.includes(tierRaw ?? '') ? (tierRaw as CapacityTier) : undefined
 
-  const specs: Record<string, string | number | boolean> = {}
+  const specs: Record<string, string | string[] | boolean> = {}
   for (const [key, value] of Object.entries(params)) {
     if (!key.startsWith('spec.')) continue
-    const s = first(value)
-    if (s != null) specs[key.slice(5)] = coerce(s)
+    const values = list(value)
+    if (!values) continue
+    if (values.length > 1) specs[key.slice(5)] = values
+    else {
+      const s = values[0]!
+      specs[key.slice(5)] = s === 'true' ? true : s === 'false' ? false : s
+    }
   }
 
   return {
@@ -62,23 +57,20 @@ export function parseCatalogQuery(params: Params): CatalogQuery {
     ratingMin: num(params.ratingMin),
     state: first(params.state),
     city: first(params.city),
-    availableThisWeekend: bool(params.availableThisWeekend) || undefined,
-    eventDate: first(params.eventDate),
+    weekend: bool(params.weekend) || undefined,
+    operator: bool(params.operator) || undefined,
     verified: bool(params.verified) || undefined,
-    capacityTier,
-    operatorIncluded: bool(params.operatorIncluded) || undefined,
-    brands: list(params.brands),
+    eventDate: first(params.eventDate),
     sort,
     page: num(params.page),
     pageSize: num(params.pageSize),
-    refIbgeCode: first(params.refIbgeCode),
     specs: Object.keys(specs).length ? specs : undefined,
   }
 }
 
 export function serializeCatalogQuery(query: CatalogQuery): Record<string, string> {
   const out: Record<string, string> = {}
-  const set = (key: string, value: string | number | boolean | undefined) => {
+  const set = (key: string, value: string | number | undefined) => {
     if (value !== undefined && value !== '') out[key] = String(value)
   }
   set('q', query.q)
@@ -88,16 +80,23 @@ export function serializeCatalogQuery(query: CatalogQuery): Record<string, strin
   set('ratingMin', query.ratingMin)
   set('state', query.state)
   set('city', query.city)
-  if (query.availableThisWeekend) out.availableThisWeekend = 'true'
-  set('eventDate', query.eventDate)
+  if (query.weekend) out.weekend = 'true'
+  if (query.operator) out.operator = 'true'
   if (query.verified) out.verified = 'true'
-  set('capacityTier', query.capacityTier)
-  if (query.operatorIncluded) out.operatorIncluded = 'true'
-  if (query.brands?.length) out.brands = query.brands.join(',')
+  set('eventDate', query.eventDate)
   set('sort', query.sort)
   set('page', query.page)
   set('pageSize', query.pageSize)
-  set('refIbgeCode', query.refIbgeCode)
-  if (query.specs) for (const [k, v] of Object.entries(query.specs)) set(`spec.${k}`, v)
+  if (query.specs) {
+    for (const [k, v] of Object.entries(query.specs)) {
+      if (Array.isArray(v)) {
+        if (v.length) out[`spec.${k}`] = v.join(',')
+      } else if (typeof v === 'boolean') {
+        if (v) out[`spec.${k}`] = 'true'
+      } else {
+        set(`spec.${k}`, v)
+      }
+    }
+  }
   return out
 }

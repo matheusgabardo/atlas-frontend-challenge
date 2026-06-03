@@ -1,22 +1,21 @@
 // Catalog query contract — shared by the Nitro API, the pure query engine and the client.
-// `route.query` is the source of truth (see docs/adr/0007); this is its typed shape.
+// `route.query` is the source of truth (docs/adr/0007); this is its typed shape.
 
 import type { CategorySlug } from './category'
-import type { CapacityTier } from './specs'
 import type { ProfessionalListItem } from './professional'
 
 export const SORT_OPTIONS = [
-  'relevance',
-  'price-asc',
-  'price-desc',
-  'rating-desc',
-  'distance-asc',
-  'reviews-desc',
+  'relevancia',
+  'preco-asc',
+  'preco-desc',
+  'avaliacao',
+  'avaliados',
+  'distancia',
 ] as const
 export type SortOption = (typeof SORT_OPTIONS)[number]
 
 export interface CatalogQuery {
-  /** Free-text search over name, category label, headline and spec terms. */
+  /** Free-text over name, category label, key specs and spec values. */
   q?: string
   categories?: CategorySlug[]
   priceMin?: number
@@ -24,22 +23,20 @@ export interface CatalogQuery {
   ratingMin?: number
   /** Two-letter state code (UF). */
   state?: string
-  /** IBGE municipality code of the selected city. */
+  /** City name. */
   city?: string
-  availableThisWeekend?: boolean
-  /** ISO date of the event; excludes suppliers already booked on that date. */
-  eventDate?: string
+  /** Available on weekends. */
+  weekend?: boolean
+  /** Brings own equipment/structure. */
+  operator?: boolean
   verified?: boolean
-  capacityTier?: CapacityTier
-  brands?: string[]
-  operatorIncluded?: boolean
-  /** Contextual spec filters, keyed by spec field name (active per selected category). */
-  specs?: Record<string, string | number | boolean>
+  /** ISO date of the event; excludes providers already booked on that date. */
+  eventDate?: string
+  /** Contextual spec filters keyed by facet id. Enum values may be multi-select (OR). */
+  specs?: Record<string, string | string[] | boolean>
   sort?: SortOption
   page?: number
   pageSize?: number
-  /** Reference city (IBGE code) used to compute/sort by distance. */
-  refIbgeCode?: string
 }
 
 export interface FacetCount {
@@ -51,7 +48,7 @@ export interface FacetCount {
 export interface CatalogFacets {
   categories: FacetCount[]
   priceRange: { min: number; max: number }
-  /** Contextual facets keyed by spec field; present when a single category is selected. */
+  /** Contextual facets keyed by facet id; present for the selected categories. */
   specs?: Record<string, FacetCount[]>
 }
 

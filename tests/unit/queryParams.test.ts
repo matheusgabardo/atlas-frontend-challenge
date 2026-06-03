@@ -5,41 +5,38 @@ import type { CatalogQuery } from '../../shared/types'
 describe('queryParams', () => {
   it('round-trips a representative query (serialize → parse)', () => {
     const query: CatalogQuery = {
-      q: 'line array',
-      categories: ['sonorizacao', 'led'],
+      q: 'dj open',
+      categories: ['dj', 'som'],
       priceMin: 500,
       priceMax: 5000,
       ratingMin: 4.5,
       state: 'SP',
-      city: '3550308',
-      availableThisWeekend: true,
-      eventDate: '2026-07-04',
+      city: 'São Paulo',
+      weekend: true,
+      operator: true,
       verified: true,
-      capacityTier: 'grande',
-      operatorIncluded: true,
-      brands: ['d&b', 'JBL'],
-      sort: 'price-asc',
+      eventDate: '2026-07-04',
+      sort: 'preco-asc',
       page: 2,
       pageSize: 24,
-      refIbgeCode: '3550308',
-      specs: { systemType: 'line-array', powerWRms: 10000, silenced: true },
+      specs: { estilo: ['House', 'Eletrônica'], estrutura: true, console: 'Digital' },
     }
     expect(parseCatalogQuery(serializeCatalogQuery(query))).toEqual(query)
   })
 
-  it('parses comma-separated arrays and typed spec.* params', () => {
+  it('parses comma arrays and typed spec.* params', () => {
     const q = parseCatalogQuery({
-      categories: 'led,gerador',
-      'spec.pixelPitch': '2.6',
-      'spec.silenced': 'true',
+      categories: 'dj,som',
+      'spec.estilo': 'House,Eletrônica',
+      'spec.estrutura': 'true',
     })
-    expect(q.categories).toEqual(['led', 'gerador'])
-    expect(q.specs).toEqual({ pixelPitch: 2.6, silenced: true })
+    expect(q.categories).toEqual(['dj', 'som'])
+    expect(q.specs).toEqual({ estilo: ['House', 'Eletrônica'], estrutura: true })
   })
 
   it('drops invalid category and sort values', () => {
-    const q = parseCatalogQuery({ categories: 'led,banana', sort: 'whatever' })
-    expect(q.categories).toEqual(['led'])
+    const q = parseCatalogQuery({ categories: 'dj,banana', sort: 'whatever' })
+    expect(q.categories).toEqual(['dj'])
     expect(q.sort).toBeUndefined()
   })
 

@@ -17,8 +17,8 @@ describe('repository (seeded dataset)', () => {
   })
 
   it('integrates with applyQuery (category filter over real data)', () => {
-    const res = applyQuery(getAllProfessionals(), { categories: ['gerador'] })
+    const res = applyQuery(getAllProfessionals(), { categories: ['dj'] })
     expect(res.total).toBeGreaterThan(0)
-    expect(res.items.every((p) => p.category === 'gerador')).toBe(true)
+    expect(res.items.every((p) => p.category === 'dj')).toBe(true)
   })
 })

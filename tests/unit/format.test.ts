@@ -11,6 +11,7 @@ describe('formatBRL', () => {
   })
 
   it('formatPrice appends the price-model label', () => {
-    expect(norm(formatPrice(800, 'por_diaria'))).toBe('a partir de R$ 800/diária')
+    expect(norm(formatPrice(800, 'evento'))).toBe('a partir de R$ 800/evento')
+    expect(norm(formatPrice(2500, 'diaria'))).toBe('a partir de R$ 2.500/diária')
   })
 })

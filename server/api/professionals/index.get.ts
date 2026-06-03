@@ -5,19 +5,17 @@ import { applyQuery } from '../../../shared/catalog/applyQuery'
 import { haversineKm } from '../../../shared/catalog/distance'
 import { toListItem } from '../../../shared/catalog/format'
 import { parseCatalogQuery } from '../../../shared/catalog/queryParams'
-import { CITY_BY_IBGE } from '../../../shared/data/cities'
+import { CITY_BY_KEY } from '../../../shared/data/cities'
 import type { Professional } from '../../../shared/types/professional'
 import type { CatalogResponse } from '../../../shared/types/query'
 
 export default defineEventHandler((event): CatalogResponse => {
   const query = parseCatalogQuery(getQuery(event) as Record<string, string | string[]>)
 
-  const origin = query.refIbgeCode ? CITY_BY_IBGE[query.refIbgeCode] : undefined
+  // Distance is measured from the selected city (when one is chosen).
+  const origin = query.city && query.state ? CITY_BY_KEY[`${query.state}:${query.city}`] : undefined
   const distanceFor = origin
-    ? (p: Professional): number | undefined => {
-        const target = CITY_BY_IBGE[p.location.ibgeCode]
-        return target ? haversineKm(origin, target) : undefined
-      }
+    ? (p: Professional): number | undefined => haversineKm(origin, p.location)
     : undefined
 
   const result = applyQuery(getAllProfessionals(), query, { distanceFor })
