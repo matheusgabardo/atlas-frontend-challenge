@@ -116,6 +116,8 @@ const quoteOpen = ref(false)
 function openFavQuote() {
   if (favorites.count) quoteOpen.value = true
 }
+
+const filtersOpen = ref(false)
 </script>
 
 <template>
@@ -168,7 +170,7 @@ function openFavQuote() {
           </button>
         </div>
         <div class="fbar">
-          <button class="btn-filters">
+          <button class="btn-filters" @click="filtersOpen = true">
             <AppIcon :d="ICONS.filter" />
             Filtros <span v-if="activeFilterCount" class="btn-filters__badge">{{ activeFilterCount }}</span>
           </button>
@@ -230,6 +232,7 @@ function openFavQuote() {
       </div>
     </div>
 
+    <FiltersDialog :open="filtersOpen" :facets="facets" @close="filtersOpen = false" />
     <Lightbox :open="lbOpen" :images="lbImages" :title="lbTitle" @close="lbOpen = false" />
     <QuoteModal :open="quoteOpen" :batch-count="favorites.count" @close="quoteOpen = false" />
   </div>
