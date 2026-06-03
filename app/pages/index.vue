@@ -93,6 +93,14 @@ const sort = computed<SortOption>({
   get: () => query.value.sort ?? 'relevancia',
   set: (v) => update({ sort: v }),
 })
+const SORT_UI = [
+  { value: 'relevancia', label: 'Relevância' },
+  { value: 'preco-asc', label: 'Preço ↑' },
+  { value: 'preco-desc', label: 'Preço ↓' },
+  { value: 'avaliacao', label: 'Melhor avaliação' },
+  { value: 'avaliados', label: 'Mais avaliados' },
+  { value: 'distancia', label: 'Distância' },
+]
 
 const cityLabel = computed(() => query.value.city ?? 'Todas as cidades')
 
@@ -244,14 +252,7 @@ function onCity(sel: { city: string; state: string } | null) {
           </button>
           <div class="fbar__spacer" />
           <div class="toolbar__count"><b>{{ total }}</b> {{ total === 1 ? 'resultado' : 'resultados' }}</div>
-          <select v-model="sort" class="sortsel" aria-label="Ordenar por">
-            <option value="relevancia">Relevância</option>
-            <option value="preco-asc">Preço ↑</option>
-            <option value="preco-desc">Preço ↓</option>
-            <option value="avaliacao">Melhor avaliação</option>
-            <option value="avaliados">Mais avaliados</option>
-            <option value="distancia">Distância</option>
-          </select>
+          <SortSelect :model-value="sort" :options="SORT_UI" @update:model-value="(v) => (sort = v as SortOption)" />
         </div>
       </div>
     </div>
