@@ -21,27 +21,27 @@ export default defineNuxtConfig({
 
   // @nuxt/image: optimization for external images (Pexels/randomuser) — see docs/adr/0006.
   image: {
-    domains: ['images.pexels.com', 'randomuser.me'],
+    domains: ['images.pexels.com', 'randomuser.me', 'picsum.photos', 'fastly.picsum.photos'],
     format: ['avif', 'webp'],
   },
 
   runtimeConfig: {
     public: {
       // Overridable via NUXT_PUBLIC_SITE_URL (used for canonical/OG/sitemap).
-      siteUrl: 'https://freelanceparaeventos.com.br',
+      siteUrl: 'https://quemfazeventos.com.br',
     },
   },
 
   app: {
     head: {
       htmlAttrs: { lang: 'pt-BR' },
-      title: 'Freelance para Eventos — profissionais para o seu evento',
+      title: 'QuemFaz Eventos — estrutura técnica para o seu evento',
       meta: [
         { name: 'viewport', content: 'width=device-width, initial-scale=1' },
         {
           name: 'description',
           content:
-            'Encontre e contrate profissionais e freelancers para o seu evento: fotógrafos, DJs, buffet, cerimonial e muito mais.',
+            'Encontre e contrate fornecedores de estrutura técnica para o seu evento: som, iluminação, painel de LED, palco, projeção e energia.',
         },
       ],
     },
