@@ -1,0 +1,38 @@
+# Reconstruídos no build (e evita trazer binários sharp do macOS):
+node_modules
+.output
+.nuxt
+.nitro
+.cache
+.data
+
+# Git / CI / hooks
+.git
+.gitignore
+.github
+.husky
+
+# Privado (NÃO entra na imagem) + docs e testes (desnecessários em produção)
+dados_privados
+docs
+tests
+**/*.test.ts
+**/*.spec.ts
+
+# Ambiente / segredos
+.env
+.env.*
+!.env.example
+
+# Lixo de SO / editor
+.DS_Store
+*.log
+coverage
+.vscode
+.idea
+
+# Plano e o próprio Docker (não precisam ir pro contexto)
+Dockerfile
+.dockerignore
+docker-compose.yml
+README.md

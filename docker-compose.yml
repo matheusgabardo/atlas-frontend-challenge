@@ -1,0 +1,23 @@
+# Produção no servidor (mgmdev). A imagem é buildada no CI e publicada no GHCR;
+# o servidor apenas faz `docker compose pull && up -d`.
+services:
+  app:
+    image: ghcr.io/matheusgabardo/atlas-frontend-challenge:${IMAGE_TAG:-latest}
+    container_name: quemfazeventos
+    restart: unless-stopped
+    ports:
+      # Exposto SÓ no localhost — quem fala com a internet é o Nginx (reverse proxy).
+      - "127.0.0.1:3000:3000"
+    environment:
+      NODE_ENV: production
+      NUXT_PUBLIC_SITE_URL: ${NUXT_PUBLIC_SITE_URL:-https://quemfazeventos.com.br}
+    healthcheck:
+      test:
+        ['CMD', 'node', '-e', "fetch('http://127.0.0.1:3000/api/health').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+    # Servidor tem 512 MB de RAM. Se o runtime apertar (OOM), descomente p/ proteger
+    # o host (Nginx/SSH) — ajustar o valor depois de medir o consumo real:
+    # mem_limit: 420m
