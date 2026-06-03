@@ -106,7 +106,7 @@ Geolocalização, comparação lado a lado, "meu evento" (carrinho multi-fornece
 App no ar em **https://quemfazeventos.com.br**. Entrega via **imagem Docker buildada no CI → GHCR → deploy por SSH → Nginx (reverse proxy) → Cloudflare (TLS)**. Decisões e trade-offs em [docs/adr/0008](docs/adr/0008-deploy-docker-servidor.md).
 
 ```
-git push main → GitHub Actions
+git push master → GitHub Actions
   ├─ CI (ci.yml): lint · typecheck · test · build
   └─ Deploy (deploy.yml): docker build (Linux) → push GHCR → ssh mgmdev
                           → docker compose pull/up → smoke test /api/health
