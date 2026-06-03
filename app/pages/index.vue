@@ -1,7 +1,13 @@
 <script setup lang="ts">
 import { CATEGORIES } from '~~/shared/catalog/categories'
 import { serializeCatalogQuery } from '~~/shared/catalog/queryParams'
-import type { CatalogResponse, CategorySlug, SortOption } from '~~/shared/types'
+import type {
+  CatalogResponse,
+  CategorySlug,
+  MediaAsset,
+  ProfessionalDetail,
+  SortOption,
+} from '~~/shared/types'
 import { ICONS } from '~/utils/icons'
 
 useHead({ title: 'QuemFaz Eventos — encontre profissionais para o seu evento' })
@@ -92,9 +98,24 @@ function clearAll() {
   searchText.value = ''
 }
 
-// Overlays (lightbox / quote / filters drawer) — wired in the next iteration.
-function onPhotos(_id: string) {}
-function onQuote(_id: string) {}
+// Lightbox (gallery quick-view) — fetches the provider's gallery on demand.
+const lbOpen = ref(false)
+const lbImages = ref<MediaAsset[]>([])
+const lbTitle = ref('')
+async function onPhotos(id: string) {
+  const item = items.value.find((i) => i.id === id)
+  if (!item) return
+  const detail = await $fetch<ProfessionalDetail>(`/api/professionals/${item.slug}`)
+  lbImages.value = detail.gallery
+  lbTitle.value = item.name
+  lbOpen.value = true
+}
+
+// Batch quote from favorites.
+const quoteOpen = ref(false)
+function openFavQuote() {
+  if (favorites.count) quoteOpen.value = true
+}
 </script>
 
 <template>
@@ -125,7 +146,7 @@ function onQuote(_id: string) {}
           <span class="city-label">{{ cityLabel }}</span>
           <AppIcon class="chev" :d="ICONS.chev" />
         </button>
-        <button class="favbtn" aria-label="Favoritos">
+        <button class="favbtn" aria-label="Solicitar orçamento dos favoritos" @click="openFavQuote">
           <AppIcon :d="ICONS.heart" fill />
           <span v-if="favorites.ready && favorites.count" class="favbtn__count">{{ favorites.count }}</span>
         </button>
@@ -198,13 +219,7 @@ function onQuote(_id: string) {}
 
         <template v-else>
           <div class="grid">
-            <ProviderCard
-              v-for="item in items"
-              :key="item.id"
-              :item="item"
-              @photos="onPhotos"
-              @quote="onQuote"
-            />
+            <ProviderCard v-for="item in items" :key="item.id" :item="item" @photos="onPhotos" />
           </div>
           <div class="loadmore">
             <button v-if="hasMore" class="btn btn--ghost" @click="loadMore">
@@ -214,5 +229,8 @@ function onQuote(_id: string) {}
         </template>
       </div>
     </div>
+
+    <Lightbox :open="lbOpen" :images="lbImages" :title="lbTitle" @close="lbOpen = false" />
+    <QuoteModal :open="quoteOpen" :batch-count="favorites.count" @close="quoteOpen = false" />
   </div>
 </template>

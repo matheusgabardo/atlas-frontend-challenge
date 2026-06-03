@@ -93,7 +93,22 @@ useHead(() => ({
   ],
 }))
 
-function onQuote() {}
+// Lightbox (gallery) + quote modal.
+const lbOpen = ref(false)
+const lbStart = ref(0)
+function openLb(i: number) {
+  lbStart.value = i
+  lbOpen.value = true
+}
+
+const quoteOpen = ref(false)
+const quoteSingle = computed(() => ({
+  name: p.value.name,
+  sub: `${CATEGORY_LABEL(p.value.category)} · ${p.value.location.city}/${p.value.location.state} · a partir de ${formatBRL(p.value.priceFrom)}/${PRICE_MODEL_LABEL[p.value.priceModel]}`,
+}))
+function onQuote() {
+  quoteOpen.value = true
+}
 </script>
 
 <template>
@@ -123,10 +138,18 @@ function onQuote() {}
       </nav>
 
       <div class="gallery">
-        <div v-for="(img, i) in gallery.slice(0, 5)" :key="i" class="gallery__cell">
+        <div
+          v-for="(img, i) in gallery.slice(0, 5)"
+          :key="i"
+          class="gallery__cell"
+          role="button"
+          tabindex="0"
+          @click="openLb(i)"
+          @keydown.enter="openLb(i)"
+        >
           <img :src="img.url" :alt="img.alt" :width="img.width" :height="img.height" loading="lazy" decoding="async">
         </div>
-        <button class="gallery__more"><AppIcon :d="ICONS.image" /> ver todas as {{ gallery.length }} fotos</button>
+        <button class="gallery__more" @click="openLb(0)"><AppIcon :d="ICONS.image" /> ver todas as {{ gallery.length }} fotos</button>
       </div>
 
       <div class="pf-grid">
@@ -212,5 +235,8 @@ function onQuote() {}
         </aside>
       </div>
     </main>
+
+    <Lightbox :open="lbOpen" :images="p.gallery" :title="p.name" :start="lbStart" @close="lbOpen = false" />
+    <QuoteModal :open="quoteOpen" :single="quoteSingle" @close="quoteOpen = false" />
   </div>
 </template>
