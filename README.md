@@ -97,5 +97,5 @@ docker run --rm -p 3000:3000 quemfazeventos:local
 ### Produção
 - **Imagem:** `Dockerfile` multi-stage (`node:22-slim`) — ~269 MB, runtime ~65 MB RAM. Build **no CI** (o servidor de 512 MB não builda Nuxt; o CI Linux ainda resolve o `sharp-linux` correto).
 - **Servidor:** `docker-compose.yml` em `/opt/quemfazeventos` puxa a imagem do GHCR e expõe `127.0.0.1:3000`; **Nginx** (`deploy/nginx/quemfazeventos.conf`) faz o proxy 80/443 → 3000.
-- **CI/CD:** workflows em `.github/workflows/`. Secrets: `SSH_HOST`, `SSH_USER`, `SSH_KEY` (GHCR via `GITHUB_TOKEN`).
+- **CI/CD:** workflows em `.github/workflows/`. Secrets: `SSH_HOST`, `SSH_USER` (user dedicado `deploy`, não-root), `SSH_KEY` (GHCR via `GITHUB_TOKEN`).
 - **TLS:** Cloudflare (modo *Full*) + cert self-signed na origem; migração recomendada para *Cloudflare Origin Certificate* (Full Strict).

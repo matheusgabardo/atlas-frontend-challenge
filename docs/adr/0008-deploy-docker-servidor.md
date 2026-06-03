@@ -13,4 +13,5 @@
 - ➕ Multi-stage `node:22-slim` (não Alpine: evita compilar libvips e estourar o disco).
 - ➖ Depende de GitHub Actions + SSH no fluxo; há uma deploy key a gerir.
 - ➖ Disco apertado exige `docker image prune` a cada deploy.
+- ➕ O deploy roda como **user dedicado `deploy`** (não-root, apenas no grupo `docker`) e a deploy key só abre esse user — *least privilege*. Caveat assumido: pertencer ao grupo `docker` ≈ root; hardening extra (forced-command na chave SSH ou Docker rootless) fica como melhoria futura.
 - **Vercel rejeitado** (decisão do usuário): controlar o ciclo completo no servidor próprio é parte do que se quer demonstrar/defender na entrevista.
