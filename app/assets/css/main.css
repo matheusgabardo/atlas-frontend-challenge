@@ -1,43 +1,22 @@
 @import "tailwindcss";
 
 /*
- * Design tokens — STARTING POINT (placeholder).
- * To be aligned with the colors/typography defined in Figma.
- * Tailwind v4: tokens declared in @theme generate utilities (bg-brand-600, text-brand-700, ...).
+ * Tailwind theme tokens mirrored from the design system (see tokens.css, which holds the
+ * full CSS-variable design system + light/dark themes). These let Tailwind utilities use the
+ * brand fonts/colors; component styling comes from the ported design CSS.
  */
 @theme {
-  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
-    "Helvetica Neue", Arial, sans-serif;
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'Sora', ui-sans-serif, system-ui, sans-serif;
 
-  /* Brand (violet placeholder — replace with the Figma palette) */
-  --color-brand-50: #f5f3ff;
-  --color-brand-100: #ede9fe;
-  --color-brand-200: #ddd6fe;
-  --color-brand-300: #c4b5fd;
-  --color-brand-400: #a78bfa;
-  --color-brand-500: #8b5cf6;
-  --color-brand-600: #7c3aed;
-  --color-brand-700: #6d28d9;
-  --color-brand-800: #5b21b6;
-  --color-brand-900: #4c1d95;
-  --color-brand-950: #2e1065;
-
-  /* Focus token (accessibility — from the screens vet) */
-  --color-focus: var(--color-brand-600);
-}
-
-/* Consistent visible focus on every interactive element (WCAG 2.4.7). */
-:focus-visible {
-  outline: 2px solid var(--color-focus);
-  outline-offset: 2px;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
-  }
+  --color-brand-50: #e6f2ff;
+  --color-brand-100: #cce3ff;
+  --color-brand-200: #99c6ff;
+  --color-brand-300: #66a8ff;
+  --color-brand-400: #3388ff;
+  --color-brand-500: #1a68ff;
+  --color-brand-600: #0d54e0;
+  --color-brand-700: #0840b8;
+  --color-brand-800: #032e80;
+  --color-brand-900: #021f5c;
 }

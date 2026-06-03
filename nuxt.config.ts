@@ -7,7 +7,16 @@ export default defineNuxtConfig({
 
   modules: ['@nuxt/image', '@nuxt/eslint', '@pinia/nuxt'],
 
-  css: ['~/assets/css/main.css'],
+  // Auto-import components by filename (e.g. <AppIcon>, <ProviderCard>) without the dir prefix.
+  components: [{ path: '~/components', pathPrefix: false }],
+
+  css: [
+    '~/assets/css/main.css',
+    '~/assets/css/tokens.css',
+    '~/assets/css/catalog.css',
+    '~/assets/css/profile.css',
+    '~/assets/css/overlays.css',
+  ],
 
   // Tailwind v4 via the official Vite plugin (no UI library) — see docs/adr/0003.
   vite: {
@@ -42,6 +51,14 @@ export default defineNuxtConfig({
           name: 'description',
           content:
             'Encontre e contrate fornecedores de estrutura técnica para o seu evento: som, iluminação, painel de LED, palco, projeção e energia.',
+        },
+      ],
+      // Apply the persisted theme before paint to avoid a flash (light/dark).
+      script: [
+        {
+          innerHTML:
+            "(function(){try{var t=localStorage.getItem('qfe_theme')||'light';document.documentElement.setAttribute('data-theme',t);}catch(e){}})();",
+          tagPosition: 'head',
         },
       ],
     },
