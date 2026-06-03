@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { CATEGORIES } from '~~/shared/catalog/categories'
+import { CATEGORIES, CATEGORY_LABEL, CONTEXTUAL_FACETS } from '~~/shared/catalog/categories'
+import { formatBRL } from '~~/shared/catalog/format'
 import { serializeCatalogQuery } from '~~/shared/catalog/queryParams'
 import type {
   CatalogResponse,
@@ -91,6 +92,54 @@ const activeFilterCount = computed(() => {
   return n
 })
 
+// Active-filter chips (with per-chip removal).
+const FACET_BY_ID = Object.fromEntries(Object.values(CONTEXTUAL_FACETS).flat().map((f) => [f.id, f]))
+function dropKey<T extends Record<string, unknown>>(obj: T, key: string): T {
+  return Object.fromEntries(Object.entries(obj).filter(([k]) => k !== key)) as T
+}
+function removeSpec(fid: string, val: string | boolean) {
+  let specs: Record<string, string | string[] | boolean> = { ...(query.value.specs ?? {}) }
+  const cur = specs[fid]
+  if (Array.isArray(cur)) {
+    const next = cur.filter((x) => x !== val)
+    if (next.length === 0) specs = dropKey(specs, fid)
+    else specs[fid] = next.length === 1 ? next[0]! : next
+  } else {
+    specs = dropKey(specs, fid)
+  }
+  update({ specs: Object.keys(specs).length ? specs : undefined })
+}
+const chips = computed(() => {
+  const q = query.value
+  const out: { key: string; label: string; remove: () => void }[] = []
+  for (const c of q.categories ?? []) out.push({ key: `cat:${c}`, label: CATEGORY_LABEL(c), remove: () => toggleCat(c) })
+  if (q.city) out.push({ key: 'city', label: q.city, remove: () => onCity(null) })
+  if (q.priceMin != null || q.priceMax != null) {
+    const label =
+      q.priceMin != null && q.priceMax != null
+        ? `${formatBRL(q.priceMin)} – ${formatBRL(q.priceMax)}`
+        : q.priceMin != null
+          ? `a partir de ${formatBRL(q.priceMin)}`
+          : `até ${formatBRL(q.priceMax!)}`
+    out.push({ key: 'price', label, remove: () => update({ priceMin: undefined, priceMax: undefined }) })
+  }
+  if (q.ratingMin) out.push({ key: 'rating', label: `${q.ratingMin}★+`, remove: () => update({ ratingMin: undefined }) })
+  if (q.verified) out.push({ key: 'verified', label: 'Verificado', remove: () => update({ verified: undefined }) })
+  if (q.weekend) out.push({ key: 'weekend', label: 'Fim de semana', remove: () => update({ weekend: undefined }) })
+  if (q.operator) out.push({ key: 'operator', label: 'Leva equipamento', remove: () => update({ operator: undefined }) })
+  if (q.specs)
+    for (const [fid, val] of Object.entries(q.specs)) {
+      const vals = Array.isArray(val) ? val : [val]
+      for (const v of vals)
+        out.push({
+          key: `spec:${fid}:${v}`,
+          label: v === true ? (FACET_BY_ID[fid]?.options[0] ?? fid) : String(v),
+          remove: () => removeSpec(fid, v),
+        })
+    }
+  return out
+})
+
 onMounted(() => favorites.load())
 
 function clearAll() {
@@ -143,7 +192,7 @@ function onCity(sel: { city: string; state: string } | null) {
           <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4" /><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" /></svg>
           <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A8.5 8.5 0 1 1 11.2 3a6.5 6.5 0 0 0 9.8 9.8z" /></svg>
         </button>
-        <button class="citybtn" aria-haspopup="listbox" :aria-expanded="cityOpen" @click="cityOpen = !cityOpen">
+        <button class="citybtn" data-citybtn aria-haspopup="listbox" :aria-expanded="cityOpen" @click="cityOpen = !cityOpen">
           <AppIcon :d="ICONS.pin" />
           <span class="city-label">{{ cityLabel }}</span>
           <AppIcon class="chev" :d="ICONS.chev" />
@@ -192,10 +241,10 @@ function onCity(sel: { city: string; state: string } | null) {
 
     <div class="shell">
       <div class="results">
-        <div v-if="activeFilterCount" class="chips" style="display:flex">
-          <span v-for="c in (query.categories ?? [])" :key="c" class="chip">
-            {{ CATEGORIES.find((x) => x.slug === c)?.label }}
-            <button class="chip__x" aria-label="Remover categoria" @click="toggleCat(c)"><AppIcon :d="ICONS.x" /></button>
+        <div v-if="chips.length" class="chips" style="display: flex">
+          <span v-for="c in chips" :key="c.key" class="chip">
+            {{ c.label }}
+            <button class="chip__x" :aria-label="`Remover ${c.label}`" @click="c.remove()"><AppIcon :d="ICONS.x" /></button>
           </span>
           <button class="chips__clear" @click="clearAll">limpar tudo</button>
         </div>

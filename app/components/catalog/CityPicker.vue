@@ -30,15 +30,27 @@ function pick(city: string, uf: string) {
   emit('select', { city, state: uf })
   emit('close')
 }
+const root = ref<HTMLElement>()
 function onKeydown(e: KeyboardEvent) {
   if (props.open && e.key === 'Escape') emit('close')
 }
-onMounted(() => document.addEventListener('keydown', onKeydown))
-onBeforeUnmount(() => document.removeEventListener('keydown', onKeydown))
+function onDocMouseDown(e: MouseEvent) {
+  if (!props.open) return
+  const t = e.target as HTMLElement
+  if (root.value && !root.value.contains(t) && !t.closest('[data-citybtn]')) emit('close')
+}
+onMounted(() => {
+  document.addEventListener('keydown', onKeydown)
+  document.addEventListener('mousedown', onDocMouseDown)
+})
+onBeforeUnmount(() => {
+  document.removeEventListener('keydown', onKeydown)
+  document.removeEventListener('mousedown', onDocMouseDown)
+})
 </script>
 
 <template>
-  <div class="citypop" :data-open="open" role="dialog" aria-label="Selecionar cidade">
+  <div ref="root" class="citypop" :data-open="open" role="dialog" aria-label="Selecionar cidade">
     <div class="citypop__search">
       <input ref="searchInput" v-model="filter" type="text" placeholder="Buscar cidade…" aria-label="Buscar cidade">
     </div>
