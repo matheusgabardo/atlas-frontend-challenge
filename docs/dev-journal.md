@@ -74,5 +74,23 @@
   - *Nota:* a **sacada da revisão multi-perspectiva foi do Matheus** — replicaremos a técnica em pontos-chave (ex.: vet das telas antes do Figma).
 
 - **Marca & decisões pós-revisão.**
-  - *Marca:* "Freelance para Eventos" (`freelanceparaeventos.com.br`) — nome direto, orientado ao benefício B2B.
+  - *Marca (aposta inicial, depois revista — ver 2026-06-03):* "Freelance para Eventos" — direto e orientado ao benefício, mas anglicismo + genérico, e "freelance" colidia com fornecedores que são empresas/locadoras.
   - *Essência:* após a revisão, manteve Docker-no-servidor (primário), roadmap em série e cobertura nacional, **sem prazo fixo** — preferiu profundidade/qualidade a um MVP enxuto, assumindo os trade-offs de forma consciente. Os gaps técnicos seguem no plano.
+
+- **Pivô de escopo (v3): nicho técnico audiovisual.**
+  - *Essência:* estreitou de "eventos em geral" (~31 categorias) para **estrutura técnica** (som · luz · LED · projeção · palco · gerador — 6 categorias). Motivo dele: **profundidade defensável** sobre o domínio real (som/eventos) em vez de amplitude rasa. A taxonomia generalista (~74) virou repertório em `dados_privados/` (fora do código).
+  - ◆ *Padrão:* as **specs técnicas viram facetas** (faceted search), modeladas como **discriminated union** por categoria — o domínio do Matheus vira o diferencial de modelagem/UX. Marca/contexto B2B preservados.
+
+- **Escopo dos incrementos (feedback do Claude Design).**
+  - *Essência:* filtrou as sugestões com critério — adotou só o **seletor de data do evento** (central pra aluguel), recusou comparação/carrinho/mapa (evita scope creep) e **parou o fluxo de conta/orçamento** até definir posicionamento/modelo. Priorização madura: profundidade no que importa, sem inflar escopo. Tokens visuais ficam para depois do nome/marca.
+
+---
+
+## 2026-06-03 — Marca definida: QuemFaz Eventos
+
+- **Escolha do nome após ~500 candidatos.**
+  - *Essência:* recusou fechar no fácil ("Freelance para Eventos") e explorou exaustivamente várias filosofias de naming (conexão, garimpo, marca-limpa) antes de decidir — exigência com a identidade do produto.
+  - *Essência (virada-chave):* **corrigiu o posicionamento** no meio do processo — "não somos o time que faz o evento; intermediamos quem quer fazer com quem faz". Isso descartou nomes de produtor (Elenco/Trupe) e levou ao **QuemFaz Eventos**, que captura a intenção de busca do organizador ("quem faz meu som/foto/buffet?") e abrange qualquer fornecedor — pessoa, empresa ou locadora —, resolvendo o furo do "freelance".
+  - *Risco consciente:* a IA alertou que já existe um "QuemFaz" ativo (marketplace de serviços locais, Batatais/SP) em ramo adjacente — risco real de colisão de marca (INPI classe 35/41). O Matheus optou por seguir; **validar no INPI antes de registrar a marca**.
+  - ◆ *Padrão (branding):* nome de **intermediário** evoca o encontro/a busca, não a execução; e marca forte troca a *mecânica* ("conecta X") por *intenção/metáfora* — daí "QuemFaz" (a pergunta do cliente) e o vice "garimpaeventos" (a metáfora).
+  - *IA:* gerou/agrupou ~500 nomes via workflows multi-agente (fan-out por ângulo) e fez a checagem de colisão que levantou o xará — IA como motor de divergência + due diligence.

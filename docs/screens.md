@@ -1,22 +1,27 @@
 # Telas & Componentes (input p/ Figma) — v3
 
-Marca: **Freelance para Eventos** (`freelanceparaeventos.com.br`). Nicho: **estrutura técnica para eventos** (som · luz · LED · projeção · palco · energia). Persona: empresas/organizadores **alugando/contratando estrutura por cidade**. Domínio completo em [`business-rules.md`](./business-rules.md).
+Marca: **QuemFaz Eventos** (`quemfazeventos.com.br`). Nicho: **estrutura técnica para eventos** (som · luz · LED · projeção · palco · energia). Persona: empresas/organizadores **alugando/contratando estrutura por cidade**. Domínio completo em [`business-rules.md`](./business-rules.md).
 
 Diferencial de UX/modelagem: **busca facetada** — filtros **contextuais por categoria** (specs técnicas) além dos globais.
 
 ## Rotas
-- `/` — catálogo (SSR da 1ª dobra)
+- `/` — **catálogo (listagem)** na homepage, conforme o challenge; SSR da 1ª dobra — `?state=&city=&…`
 - `/profissional/[slug]` — perfil do fornecedor (SSR)
 - `/favoritos` — client-only (hidrata do localStorage)
 - `/404`
+
+> **Fluxo cidade-first:** a listagem vive em `/`. No 1º acesso (sem cidade) abre o `CityPickerModal` (estado → cidade); ao confirmar, aplica `?state=<UF>&city=<ibge>` na própria `/`. O header tem **"trocar cidade"** (reabre o modal). Sem cidade, a listagem mostra resultados em destaque (não fica vazia).
 
 ## Design tokens (ponto de partida)
 - **Cores:** primária + neutros + sucesso/aviso/erro + cor do selo "verificado".
 - **Tipografia:** 1 família (self-host ou system), escala tipográfica.
 - **Base:** espaçamento 4px, raios, sombras. **Breakpoints:** 360 / 768 / 1024 / 1440. **Grid de cards:** 1→2→3→4 colunas.
 
-## `/` Catálogo
-- **Header:** logo · busca (nome/categoria/**spec**: "line array", "P2.6", "gerador silenciado") · seletor de cidade (estado→cidade) · favoritos (com contador).
+### CityPickerModal (entrada da busca)
+Dialog acessível: **estado** (lista das 27 UFs) → **cidade** (combobox com busca, lazy por UF) → botão **"Ver fornecedores"**. Abre no **1º acesso** (sem cidade) e via **"trocar cidade"** no header. Estados: loading por UF, "nenhuma cidade", cidade desabilitada sem UF. (a11y do combobox detalhada abaixo)
+
+## `/` Catálogo (listagem por cidade)
+- **Header:** logo · **cidade atual + "trocar"** (reabre o `CityPickerModal`) · busca (nome/categoria/**spec**: "line array", "P2.6", "gerador silenciado") · favoritos (com contador).
 - **Filtros** (desktop: sidebar · mobile: bottom-sheet "Filtros"):
   - **Globais:** categoria (multi) · preço (range slider) · avaliação mín. · cidade/estado · disponível fim de semana · verificado · porte/público · marca · operador incluso.
   - **Contextuais** (aparecem conforme a categoria — o diferencial): LED → pixel pitch + indoor/outdoor · Luz → tipo de fixture + treliça · Som → line array/ponto + console · Gerador → kVA + silenciado · Projeção → lúmens + mapping · Palco → tipo de estrutura + cobertura. Contagens recalculadas via `/api/facets`.
@@ -39,15 +44,16 @@ Lista de cards favoritados (client-only) · empty com CTA p/ catálogo · ação
 
 ## Inventário de componentes → design system
 - **ui/**: AppButton · AppBadge (selo) · SpecBadge (spec-chave) · RatingStars · PriceTag · Skeleton · Dialog (base p/ lightbox+drawer+modal) · Lightbox · RangeSlider · Combobox · Chip · EmptyState · ErrorState · FavoriteButton.
-- **catalog/**: SearchBar · CityPicker · FilterPanel · ContextualFacets (facetas por categoria) · FilterDrawer (mobile) · SortSelect · ActiveFilters · ResultsGrid · LoadMore.
+- **catalog/**: CityPickerModal (Dialog + CityPicker) · CityPicker · SearchBar · CategoryBar (atalhos das 6 categorias) · FilterPanel · ContextualFacets (facetas por categoria) · FilterDrawer (mobile) · SortSelect · ActiveFilters · ResultsGrid · LoadMore.
 - **provider/**: ProviderCard · ProviderHeader · Gallery · SpecsTable · ServicesList · ReviewsList · Availability · QuoteModal (orçamento mockado).
 - **layout/**: AppHeader · AppFooter.
 
 ## Fluxos-chave
-1. Buscar → escolher categoria → **facetas contextuais aparecem** → filtrar/ordenar → resultado (estado na URL).
-2. Card → "ver fotos" → lightbox (teclado/ESC/setas).
-3. Card/perfil → "Solicitar orçamento" → modal (form mockado).
-4. ♥ favoritar → `/favoritos` → orçamento em lote.
+1. **1º acesso → CityPickerModal (estado→cidade) → aplica `?state=&city=` na `/` (listagem).**
+2. Em `/`: escolher categoria → **facetas contextuais aparecem** → filtrar/ordenar → resultado (estado na URL); **"trocar cidade"** reabre o modal.
+3. Card → "ver fotos" → lightbox (teclado/ESC/setas).
+4. Card/perfil → "Solicitar orçamento" → modal (form mockado).
+5. ♥ favoritar → `/favoritos`.
 
 ## A11y (componentes próprios = a11y é nossa)
 - **Dialog/Lightbox/Drawer:** `role=dialog` · `aria-modal` · focus trap · ESC · `inert` no fundo · restaura foco. Lightbox: setas ←/→ + `aria-live` ("foto 2 de 8").

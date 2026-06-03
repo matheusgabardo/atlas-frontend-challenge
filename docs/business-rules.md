@@ -114,6 +114,10 @@ Exemplos de specs-chave: "Line array · até 5.000 pax" · "LED P2.6 · 40 m² �
 - ⏳ Campos do card (validar as specs-chave exibidas por categoria)
 - ⏳ Distribuição ponderada + empty state com cidades próximas (validar abordagem)
 - ⏳ `providerType` por categoria (proporção empresa/locadora vs. autônomo no seed)
+- ✅ Incrementos (feedback Claude Design): **adotado** seletor de **data do evento** (cruza com disponibilidade); **não** adotados comparação lado a lado, "meu evento"/carrinho e mapa (escopo/valor).
+- ⏸️ Pós-orçamento/conta: **sem fluxo de conta**; CTA de orçamento fica parado até definir posicionamento/modelo de negócio (challenge é front-end, sem backend/auth).
+- ⏳ Tokens visuais (cor/tipografia/logo): após definição do nome/marca pelo Matheus.
+- ✅ Fluxo de entrada **cidade-first**: listagem na `/` (homepage, conforme o challenge); modal estado→cidade no 1º acesso aplica `?state=&city=` na própria `/`; "trocar cidade" no header reabre o modal. Resolve o onboarding sem cidade.
 
 ## 6. Histórico de escopo
 - **v1–v2:** catálogo generalista de eventos (~30–31 categorias, 10 grupos; entidade ampliada para "fornecedor" com `providerType`).

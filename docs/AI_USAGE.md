@@ -3,7 +3,8 @@
 > Requisito do challenge: informar quais ferramentas de IA foram utilizadas e como. Este documento descreve **as ferramentas, a forma de uso e os princípios** que guiaram o trabalho com IA — refletindo também os diferenciais da vaga (engenharia de prompts, automação assistida, revisão crítica e orientação sobre uso responsável de IA).
 
 ## Ferramentas utilizadas
-- **Claude Code (Claude Opus)** — apoio em planejamento, scaffold, geração de código, documentação e revisão.
+- **Claude Code (Claude Opus)** — apoio em planejamento, scaffold, geração de código, documentação e revisão; orquestração de workflows multi-agente (revisão do plano e vet das telas).
+- **Claude Design** — geração dos layouts de alta fidelidade a partir de [`screens.md`](./screens.md).
 - _(Atualizar caso outras ferramentas sejam usadas: Copilot, Cursor, ChatGPT etc.)_
 
 ## Princípio condutor

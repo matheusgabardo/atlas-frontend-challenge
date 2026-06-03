@@ -1,6 +1,6 @@
 # Contribuindo
 
-Padrões do projeto **Freelance para Eventos**.
+Padrões do projeto **QuemFaz Eventos**.
 
 ## Idioma
 - **Código em inglês:** identificadores (funções, variáveis, tipos, componentes) **e comentários de código**.
