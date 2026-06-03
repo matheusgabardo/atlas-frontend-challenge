@@ -1,0 +1,11 @@
+# Dev / local — carregado automaticamente pelo `docker compose` NESTE repositório.
+# Builda a imagem localmente em vez de puxar do GHCR. NÃO vai para o servidor:
+# em produção roda apenas o docker-compose.yml (que faz `pull` da imagem do CI).
+services:
+  app:
+    build: .
+    pull_policy: build # sempre usar a imagem buildada local, nunca tentar pull
+    container_name: quemfazeventos-dev
+    environment:
+      NODE_ENV: production
+      NUXT_PUBLIC_SITE_URL: http://localhost:3000

@@ -21,11 +21,28 @@ Marketplace **B2B** que conecta organizadores (produtoras, casas de festa, empre
 
 ## Como rodar
 
-Requisitos: Node 20+ e npm.
+> O dataset (≥ 500 profissionais) já vem **commitado** — roda **offline e sem nenhuma chave de API** ([ADR-006](docs/adr/0006-dados-build-time.md)).
+
+### Opção 1 — Docker (idêntico à produção)
+Sobe o app na mesma imagem multi-stage usada no servidor. Requer só Docker.
+
+```bash
+docker compose up --build      # builda e sobe em http://localhost:3000
+# health-check: http://localhost:3000/api/health
+# parar: Ctrl+C  (ou `docker compose down`)
+```
+> Em dev, o `docker-compose.override.yml` builda a imagem **localmente**; em produção o `docker-compose.yml` faz **`pull`** da imagem publicada no GHCR pelo CI.
+
+### Opção 2 — Node direto (hot-reload, sem Docker)
+Requisitos: **Node 20+** e **npm**.
 
 ```bash
 npm install        # instala dependências
-npm run dev        # ambiente de dev em http://localhost:3000
+npm run dev        # dev server com HMR em http://localhost:3000
+```
+
+### Scripts úteis
+```bash
 npm run build      # build de produção (Nitro node-server)
 npm run preview    # serve o build localmente
 npm run test       # testes (Vitest)
@@ -33,8 +50,6 @@ npm run lint       # ESLint
 npm run typecheck  # checagem de tipos (vue-tsc)
 npm run seed       # regenera o dataset (server/data/professionals.json)
 ```
-
-> O dataset (≥ 500 profissionais) já vem **commitado** no repositório — `npm install && npm run dev` funciona **offline e sem nenhuma chave de API** (ver [ADR-006](docs/adr/0006-dados-build-time.md)).
 
 ## Funcionalidades (× requisitos do challenge)
 
@@ -69,7 +84,9 @@ Destaques técnicos:
 - **Estado na URL**: filtros/ordenação/cidade são compartilháveis e sobrevivem ao refresh; o SSR renderiza a 1ª dobra já filtrada.
 
 ## Performance & Core Web Vitals
-SSR da primeira dobra; imagens via **`@nuxt/image`** (`<NuxtImg>`: AVIF/WebP, `srcset` responsivo, `width/height` → CLS≈0, `loading="lazy"`, e a 1ª dobra `eager`/`fetchpriority="high"` para o LCP); code-split por rota; fontes com `display: swap`. (Observabilidade de Web Vitals é uma evolução planejada.)
+SSR da primeira dobra; imagens via **`@nuxt/image`** (`<NuxtImg>`: AVIF/WebP, `srcset` responsivo, `width/height` → CLS≈0, `loading="lazy"`, e a 1ª dobra `eager`/`fetchpriority="high"` para o LCP); code-split por rota; fontes com `display: swap`.
+
+**Observabilidade (RUM):** um plugin *client-only* coleta **LCP · CLS · INP · FCP · TTFB** (lib [`web-vitals`](https://github.com/GoogleChrome/web-vitals)) e envia via `navigator.sendBeacon` ao endpoint Nitro **`/api/vitals`** — registrado no servidor (visível em `docker logs`).
 
 ## Acessibilidade
 Foco visível (`:focus-visible`), navegação por teclado nos diálogos (ESC, setas no lightbox), `role`/`aria-*`, contraste AA e `prefers-reduced-motion`.
@@ -99,7 +116,7 @@ Detalhado em [`docs/AI_USAGE.md`](docs/AI_USAGE.md). Em resumo: **Claude Code** 
 Dados e imagens são **fictícios**, para demonstração: nomes/textos via **Faker (pt-BR)**, avatares via **randomuser.me**, fotos via **picsum.photos**. Nenhuma pessoa real está associada aos serviços.
 
 ## Melhorias futuras
-Geolocalização, comparação lado a lado, "meu evento" (carrinho multi-fornecedor), contas/auth com dashboard do fornecedor, cobertura nacional completa (IBGE) e observabilidade de Web Vitals.
+Geolocalização, comparação lado a lado, "meu evento" (carrinho multi-fornecedor), contas/auth com dashboard do fornecedor, cobertura nacional completa (IBGE) e dashboards/APM sobre as métricas de Web Vitals já coletadas.
 
 ## Infra & Deploy
 

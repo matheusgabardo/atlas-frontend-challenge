@@ -5,6 +5,9 @@ name: Deploy
 on:
   push:
     branches: [master]
+    paths-ignore: # mudanças só de documentação não redeployam
+      - '**.md'
+      - 'docs/**'
   workflow_dispatch: # permite disparar manualmente pela aba Actions
 
 concurrency:
