@@ -8,7 +8,7 @@ const { query, update } = useCatalogQuery()
 
 const bounds = computed(() => props.facets?.priceRange ?? { min: 0, max: 10000 })
 const price = computed<[number, number]>({
-  get: () => [query.value.priceMin ?? bounds.value.min, query.value.priceMax ?? bounds.value.max],
+  get: (): [number, number] => [query.value.priceMin ?? bounds.value.min, query.value.priceMax ?? bounds.value.max],
   set: ([lo, hi]) =>
     update({
       priceMin: lo > bounds.value.min ? lo : undefined,
