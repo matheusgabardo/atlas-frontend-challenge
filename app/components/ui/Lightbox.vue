@@ -9,7 +9,7 @@ const idx = ref(props.start ?? 0)
 const total = computed(() => props.images.length)
 const closeBtn = ref<HTMLButtonElement>()
 const panel = ref<HTMLElement>()
-useFocusTrap(() => props.open, panel)
+useFocusTrap(() => props.open, panel, { inertBackground: true })
 
 function move(delta: number) {
   if (!total.value) return

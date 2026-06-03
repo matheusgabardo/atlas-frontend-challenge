@@ -6,7 +6,7 @@ const props = defineProps<{ open: boolean; facets?: CatalogFacets }>()
 const emit = defineEmits<{ close: [] }>()
 
 const panel = ref<HTMLElement>()
-useFocusTrap(() => props.open, panel)
+useFocusTrap(() => props.open, panel, { inertBackground: true })
 
 function onKeydown(e: KeyboardEvent) {
   if (props.open && e.key === 'Escape') emit('close')

@@ -13,7 +13,8 @@ const errors = reactive({ name: false, email: false, msg: false })
 const submitting = ref(false)
 const success = ref(false)
 const panel = ref<HTMLElement>()
-useFocusTrap(() => props.open, panel)
+const successHeading = ref<HTMLElement>()
+useFocusTrap(() => props.open, panel, { inertBackground: true })
 
 const title = computed(() =>
   props.single ? 'Solicitar orçamento' : `Orçamento de ${props.batchCount} profissionais`,
@@ -30,12 +31,24 @@ function submit() {
   errors.name = !form.name.trim()
   errors.email = !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(form.email)
   errors.msg = !form.msg.trim()
-  if (errors.name || errors.email || errors.msg) return
+  if (errors.name || errors.email || errors.msg) {
+    // Move focus to the first invalid field so screen-reader users hear the error.
+    const first = errors.name ? 'quote-name' : errors.email ? 'quote-email' : 'quote-msg'
+    nextTick(() => panel.value?.querySelector<HTMLElement>(`#${first}`)?.focus())
+    return
+  }
   submitting.value = true
-  // Mocked submission (no backend in this MVP) — see docs/mvp-scope.md.
+
+  const payload = {
+    ...form,
+    target: props.single ? props.single.name : `lote: ${props.batchCount} profissionais`,
+  }
+  // Demo: dados do formulário no console do navegador. MVP sem backend (ver mvp-scope.md).
+  console.info('[orçamento] enviando →', payload)
   setTimeout(() => {
     submitting.value = false
     success.value = true
+    nextTick(() => successHeading.value?.focus())
   }, 700)
 }
 
@@ -88,36 +101,58 @@ onBeforeUnmount(() => {
 
           <form novalidate @submit.prevent="submit">
             <div class="field" :data-error="errors.name">
-              <label>Nome <span class="req">*</span></label>
-              <input v-model="form.name" autocomplete="name">
-              <div class="field__err">Informe seu nome.</div>
+              <label for="quote-name">Nome <span class="req" aria-hidden="true">*</span></label>
+              <input
+                id="quote-name"
+                v-model="form.name"
+                autocomplete="name"
+                aria-required="true"
+                :aria-invalid="errors.name || undefined"
+                :aria-describedby="errors.name ? 'quote-name-err' : undefined"
+              >
+              <div v-if="errors.name" id="quote-name-err" class="field__err" role="alert">Informe seu nome.</div>
             </div>
             <div class="field--row">
               <div class="field" :data-error="errors.email">
-                <label>E-mail <span class="req">*</span></label>
-                <input v-model="form.email" type="email" autocomplete="email">
-                <div class="field__err">E-mail inválido.</div>
+                <label for="quote-email">E-mail <span class="req" aria-hidden="true">*</span></label>
+                <input
+                  id="quote-email"
+                  v-model="form.email"
+                  type="email"
+                  autocomplete="email"
+                  aria-required="true"
+                  :aria-invalid="errors.email || undefined"
+                  :aria-describedby="errors.email ? 'quote-email-err' : undefined"
+                >
+                <div v-if="errors.email" id="quote-email-err" class="field__err" role="alert">E-mail inválido.</div>
               </div>
               <div class="field">
-                <label>WhatsApp</label>
-                <input v-model="form.phone" type="tel" placeholder="(11) 90000-0000">
+                <label for="quote-phone">WhatsApp</label>
+                <input id="quote-phone" v-model="form.phone" type="tel" autocomplete="tel" placeholder="(11) 90000-0000">
               </div>
             </div>
             <div class="field--row">
-              <div class="field"><label>Data do evento</label><input v-model="form.date" type="date"></div>
-              <div class="field"><label>Público estimado</label><input v-model="form.pax" type="number" placeholder="ex: 150"></div>
+              <div class="field"><label for="quote-date">Data do evento</label><input id="quote-date" v-model="form.date" type="date"></div>
+              <div class="field"><label for="quote-pax">Público estimado</label><input id="quote-pax" v-model="form.pax" type="number" min="0" placeholder="ex: 150"></div>
             </div>
             <div class="field" :data-error="errors.msg">
-              <label>Detalhes <span class="req">*</span></label>
-              <textarea v-model="form.msg" placeholder="Tipo de evento, local, horários, o que você precisa…" />
-              <div class="field__err">Conte um pouco sobre o evento.</div>
+              <label for="quote-msg">Detalhes <span class="req" aria-hidden="true">*</span></label>
+              <textarea
+                id="quote-msg"
+                v-model="form.msg"
+                aria-required="true"
+                :aria-invalid="errors.msg || undefined"
+                :aria-describedby="errors.msg ? 'quote-msg-err' : undefined"
+                placeholder="Tipo de evento, local, horários, o que você precisa…"
+              />
+              <div v-if="errors.msg" id="quote-msg-err" class="field__err" role="alert">Conte um pouco sobre o evento.</div>
             </div>
           </form>
         </template>
 
-        <div v-else class="quote-success">
+        <div v-else class="quote-success" role="status" aria-live="polite">
           <div class="quote-success__icon"><AppIcon :d="ICONS.check" /></div>
-          <h3>Pedido enviado!</h3>
+          <h3 ref="successHeading" tabindex="-1">Pedido enviado!</h3>
           <p>{{ single ? 'O profissional recebeu' : `Os ${batchCount} profissionais receberam` }} sua solicitação.</p>
           <div class="quote-success__next">
             <b>Próximo passo:</b> você recebe as propostas por e-mail e WhatsApp — normalmente em até 24h.
