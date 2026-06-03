@@ -15,6 +15,10 @@ export const ICONS = {
   arrowR: 'M9 6l6 6-6 6',
   empty: 'M5 8h14v11H5z M9 12h6',
   back: 'M15 6l-6 6 6 6',
+  clock: 'M12 7v5l3 2 M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18z',
+  calendar: 'M4 6h16v15H4z M4 10h16 M8 3v4 M16 3v4',
+  box: 'M3 7l9-4 9 4-9 4-9-4z M3 7v10l9 4 9-4V7 M12 11v10',
+  check: 'M5 12l4.5 4.5L19 7',
 } as const
 
 export type IconName = keyof typeof ICONS
