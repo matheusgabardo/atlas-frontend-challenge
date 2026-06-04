@@ -115,6 +115,7 @@ onBeforeUnmount(() => document.removeEventListener('mousedown', onDocMouseDown))
   top: calc(100% + 6px);
   z-index: 50;
   min-width: 210px;
+  max-width: calc(100vw - 24px);
   background: var(--surface);
   border: 1px solid var(--line);
   border-radius: var(--r-md);

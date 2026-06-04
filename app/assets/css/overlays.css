@@ -81,7 +81,9 @@
 
 /* ---------- City picker dropdown ---------- */
 .citypop {
-  position: absolute; top: calc(var(--header-h) - 8px); z-index: 60;
+  /* Anchored to the right of the topbar (its containing block), dropping just below the
+     header next to the city button — not the left/static position it defaulted to. */
+  position: absolute; top: calc(var(--header-h) + 6px); right: var(--sp-6); z-index: 60;
   width: 360px; max-width: calc(100vw - 32px);
   background: var(--bg-2); border: 1px solid var(--line); border-radius: var(--r-lg);
   box-shadow: var(--shadow-lg); overflow: hidden; display: none;
@@ -187,6 +189,12 @@
   .card__foot .btn--primary { height: 44px; }
   /* Quote form: stack paired fields so each input is full-width on mobile */
   .field--row { grid-template-columns: 1fr; }
+  /* Keep the control row on a single line so the sort stays at the right edge — when it
+     wrapped to its own line it landed at the left and its right-anchored dropdown
+     overflowed off-screen. The result count truncates instead of wrapping. */
+  .fbar { flex-wrap: nowrap; }
+  .btn-filters, .sortselect { flex-shrink: 0; }
+  .toolbar__count { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
   /* City dropdown vira folha full-width abaixo do header empilhado */
   .citypop {
