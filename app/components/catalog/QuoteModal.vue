@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ICONS } from '~/utils/icons'
+import { maskPhone } from '~/utils/phone'
 
 const props = defineProps<{
   open: boolean
@@ -50,6 +51,10 @@ function submit() {
     success.value = true
     nextTick(() => successHeading.value?.focus())
   }, 700)
+}
+
+function onPhone(e: Event) {
+  form.phone = maskPhone((e.target as HTMLInputElement).value)
 }
 
 function onKeydown(e: KeyboardEvent) {
@@ -128,7 +133,7 @@ onBeforeUnmount(() => {
               </div>
               <div class="field">
                 <label for="quote-phone">WhatsApp</label>
-                <input id="quote-phone" v-model="form.phone" type="tel" autocomplete="tel" placeholder="(11) 90000-0000">
+                <input id="quote-phone" :value="form.phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="(11) 90000-0000" @input="onPhone">
               </div>
             </div>
             <div class="field--row">
