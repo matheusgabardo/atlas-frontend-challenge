@@ -5,8 +5,10 @@
 .app { min-height: 100vh; display: flex; flex-direction: column; }
 
 /* ---------- Header ---------- */
+/* Header + filterbar are pinned together as one sticky unit so the filterbar always
+   sits directly below the header, whatever the header's (mobile-variable) height. */
+.topbar { position: sticky; top: 0; z-index: 40; }
 .header {
-  position: sticky; top: 0; z-index: 40;
   height: var(--header-h);
   background: var(--header-bg);
   backdrop-filter: blur(14px);
@@ -72,7 +74,7 @@
 .sidebar.is-drawer { display: none; }
 
 /* ---------- Filter bar (topo, centralizada) ---------- */
-.filterbar { position: sticky; top: var(--header-h); z-index: 30; background: var(--header-bg); backdrop-filter: blur(14px); border-bottom: 1px solid var(--line); }
+.filterbar { background: var(--header-bg); backdrop-filter: blur(14px); border-bottom: 1px solid var(--line); }
 .filterbar__inner { width: 100%; max-width: 1320px; margin: 0 auto; padding: var(--sp-4) var(--sp-6); display: flex; flex-direction: column; gap: var(--sp-3); }
 
 /* category pills — single-line carousel (CategoryCarousel.vue) */
