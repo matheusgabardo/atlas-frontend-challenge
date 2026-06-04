@@ -31,7 +31,6 @@ docker compose up --build      # builda e sobe em http://localhost:3000
 # health-check: http://localhost:3000/api/health
 # parar: Ctrl+C  (ou `docker compose down`)
 ```
-> Em dev, o `docker-compose.override.yml` builda a imagem **localmente**; em produção o `docker-compose.yml` faz **`pull`** da imagem publicada no GHCR pelo CI.
 
 ### Opção 2 — Node direto (hot-reload, sem Docker)
 Requisitos: **Node 20+** e **npm**.

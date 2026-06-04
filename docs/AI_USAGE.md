@@ -5,7 +5,7 @@
 ## Ferramentas utilizadas
 - **Claude Code (Claude Opus)** — apoio em planejamento, scaffold, geração de código, documentação e revisão; orquestração de workflows multi-agente (revisão do plano e vet das telas).
 - **Claude Design** — geração dos layouts de alta fidelidade a partir de [`screens.md`](./screens.md).
-- _(Atualizar caso outras ferramentas sejam usadas: Copilot, Cursor, ChatGPT etc.)_
+- **ChatGPT** - criação da identidade da marca.
 
 ## Princípio condutor
 > **A IA é ferramenta; as decisões e a autoria são do desenvolvedor.**
