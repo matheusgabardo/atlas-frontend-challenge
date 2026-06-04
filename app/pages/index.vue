@@ -168,13 +168,27 @@ const chips = computed(() => {
 
 onMounted(() => favorites.load())
 
-// Returning from a profile: briefly highlight the card that was opened (docs/adr/0010).
-// The catalog is kept alive, so the list (incl. extra "load more" pages) and the scroll
-// position survive; we only flag the card for orientation, respecting reduced motion.
+// Returning from a profile (docs/adr/0010). The catalog is kept alive, so the list
+// (incl. extra "load more" pages) survives. We save the scroll on leave and restore it
+// on return AFTER layout settles (two rAFs) — router scrollBehavior runs too early and
+// clamps the offset — and briefly highlight the card that was opened.
 const { consume } = useCatalogReturn()
 const returningSlug = ref<string | null>(null)
 let returnTimer: ReturnType<typeof setTimeout> | undefined
+let savedScroll = 0
+let didLeave = false
+
+onDeactivated(() => {
+  savedScroll = window.scrollY
+  didLeave = true
+})
+
 function flagReturn() {
+  if (didLeave) {
+    didLeave = false
+    const y = savedScroll
+    requestAnimationFrame(() => requestAnimationFrame(() => window.scrollTo({ top: y })))
+  }
   const slug = consume()
   if (!slug) return
   returningSlug.value = slug

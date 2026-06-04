@@ -7,7 +7,7 @@
 **Decisão:**
 
 1. **`keepalive` na página do catálogo** — `definePageMeta({ keepalive: true })`. A instância é mantida em memória ao navegar para o perfil; ao voltar, os itens (todas as páginas) e o DOM continuam montados, **sem refetch**.
-2. **`scrollBehavior` explícito** (`app/router.options.ts`): em `popstate` (voltar/avançar) restaura a `savedPosition` exata (após um `nextTick`, para o DOM keep-alive já estar reanexado); em troca de filtro/ordenação (mesmo path) **não** rola pro topo; navegação nova vai ao topo (respeitando âncoras). Como a lista segue montada, a posição salva cai exatamente sobre o card aberto.
+2. **A página do catálogo gerencia o próprio scroll.** Salva `window.scrollY` em `onDeactivated` (ao sair) e restaura em `onActivated` (ao voltar) **após o layout assentar** — dois `requestAnimationFrame`. O `scrollBehavior` global (`app/router.options.ts`) **delega `/` à página** (retorna `false`), tratando as demais rotas normalmente (`savedPosition` no back, topo nas novas). _Por quê não usar só o `scrollBehavior`:_ para uma página keep-alive ele dispara cedo demais (num microtask, antes do DOM reanexado ter altura), então o offset era **clampado** e o retorno caía no lugar errado. Restaurar após o paint resolve.
 3. **Voltar inteligente** no perfil (`catalogBackTarget`): se o usuário veio do catálogo (`history.state.back` é `/` ou `/?…`), `router.back()` restaura scroll/estado; senão (link direto, outra origem), `navigateTo('/')`.
 4. **Realce do card** ao retornar — `useState` guarda o slug clicado (escrito no clique do card, lido no `onActivated`); ~1.8s de `outline`, respeitando `prefers-reduced-motion`. Orienta o olho para "o item que você abriu".
 
