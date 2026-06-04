@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { CONTEXTUAL_FACETS } from '~~/shared/catalog/categories'
+import { CATEGORIES, CONTEXTUAL_FACETS } from '~~/shared/catalog/categories'
 import type { CatalogFacets, CategorySlug } from '~~/shared/types'
 import { ICONS } from '~/utils/icons'
 
@@ -23,6 +23,19 @@ const RATINGS: [number, string][] = [
   [0, 'Qualquer'],
 ]
 const selectedCats = computed<CategorySlug[]>(() => query.value.categories ?? [])
+
+function catCount(slug: string): number {
+  return props.facets?.categories?.find((c) => c.value === slug)?.count ?? 0
+}
+function isCat(slug: CategorySlug): boolean {
+  return query.value.categories?.includes(slug) ?? false
+}
+function toggleCat(slug: CategorySlug) {
+  const set = new Set(query.value.categories ?? [])
+  if (set.has(slug)) set.delete(slug)
+  else set.add(slug)
+  update({ categories: set.size ? [...set] : undefined })
+}
 
 function facetCount(facetId: string, value: string): number {
   return props.facets?.specs?.[facetId]?.find((f) => f.value === value)?.count ?? 0
@@ -59,6 +72,16 @@ function toggleSpec(facetId: string, value: string, isBool: boolean) {
 
 <template>
   <div>
+    <div class="filter-group">
+      <div class="filter-group__title">Categorias</div>
+      <label v-for="c in CATEGORIES" :key="c.slug" class="opt">
+        <input type="checkbox" :checked="isCat(c.slug)" @change="toggleCat(c.slug)">
+        <span class="opt__box"><AppIcon :d="ICONS.check" /></span>
+        <span class="opt__label"><AppIcon class="opt__cat-icon" :d="c.icon" /> {{ c.label }}</span>
+        <span class="opt__count">{{ catCount(c.slug) }}</span>
+      </label>
+    </div>
+
     <template v-if="selectedCats.length">
       <template v-for="cat in selectedCats" :key="cat">
         <div v-for="f in CONTEXTUAL_FACETS[cat]" :key="f.id" class="filter-group">

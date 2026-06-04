@@ -150,6 +150,7 @@
 .opt input:focus-visible + .opt__box { box-shadow: var(--focus-ring); }
 .opt__label { font-size: var(--fs-sm); color: var(--text); flex: 1; }
 .opt__count { font-size: var(--fs-xs); color: var(--text-3); font-variant-numeric: tabular-nums; }
+.opt__cat-icon { width: 15px; height: 15px; vertical-align: -3px; margin-right: 2px; }
 .opt[data-disabled="true"] { opacity: 0.4; cursor: not-allowed; }
 .opt:hover:not([data-disabled="true"]) .opt__label { color: var(--primary); }
 
