@@ -185,6 +185,8 @@
   .results { padding: var(--sp-4); }
   .grid { grid-template-columns: 1fr; }
   .card__foot .btn--primary { height: 44px; }
+  /* Quote form: stack paired fields so each input is full-width on mobile */
+  .field--row { grid-template-columns: 1fr; }
 
   /* City dropdown vira folha full-width abaixo do header empilhado */
   .citypop {

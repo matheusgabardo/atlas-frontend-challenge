@@ -133,7 +133,7 @@ onBeforeUnmount(() => {
               </div>
               <div class="field">
                 <label for="quote-phone">WhatsApp</label>
-                <input id="quote-phone" :value="form.phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="(11) 90000-0000" @input="onPhone">
+                <input id="quote-phone" :value="form.phone" type="tel" inputmode="tel" autocomplete="tel" maxlength="15" placeholder="(11) 90000-0000" @input="onPhone">
               </div>
             </div>
             <div class="field--row">
