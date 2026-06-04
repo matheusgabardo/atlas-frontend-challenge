@@ -186,6 +186,24 @@ function flagReturn() {
 onActivated(flagReturn)
 onBeforeUnmount(() => clearTimeout(returnTimer))
 
+// Keep the sticky filterbar pinned right below the header. On mobile the header grows
+// taller (the search wraps to its own row), so a fixed top:var(--header-h) let the
+// filterbar slide under it — measure the real header height and track it instead.
+const headerEl = ref<HTMLElement>()
+const filterbarTop = ref('var(--header-h)')
+let headerRO: ResizeObserver | undefined
+function syncTopOffset() {
+  if (headerEl.value) filterbarTop.value = `${headerEl.value.offsetHeight}px`
+}
+onMounted(() => {
+  syncTopOffset()
+  if (headerEl.value && typeof ResizeObserver !== 'undefined') {
+    headerRO = new ResizeObserver(syncTopOffset)
+    headerRO.observe(headerEl.value)
+  }
+})
+onBeforeUnmount(() => headerRO?.disconnect())
+
 function clearAll() {
   reset()
   searchText.value = ''
@@ -215,7 +233,7 @@ function onCity(sel: { city: string; state: string } | null) {
 
 <template>
   <div class="app" data-screen-label="Catálogo">
-    <header class="header">
+    <header ref="headerEl" class="header">
       <NuxtLink class="brand" to="/" aria-label="QuemFaz Eventos — início">
         <span class="brand__mark"><img src="/logo-symbol.png" alt="" width="36" height="36"></span>
         <span class="brand__name"><span class="word">quem<span class="faz">faz</span></span><small>Eventos</small></span>
@@ -250,7 +268,7 @@ function onCity(sel: { city: string; state: string } | null) {
 
     <CityPicker :open="cityOpen" :current="query.city" @close="cityOpen = false" @select="onCity" />
 
-    <div class="filterbar">
+    <div class="filterbar" :style="{ top: filterbarTop }">
       <div class="filterbar__inner">
         <CategoryCarousel :active="query.categories" :counts="facets?.categories" @toggle="toggleCat" />
         <div class="fbar">
