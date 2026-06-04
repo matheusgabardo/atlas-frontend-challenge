@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { CATEGORIES, CATEGORY_LABEL, CONTEXTUAL_FACETS } from '~~/shared/catalog/categories'
+import { CATEGORY_LABEL, CONTEXTUAL_FACETS } from '~~/shared/catalog/categories'
 import { formatBRL } from '~~/shared/catalog/format'
 import { serializeCatalogQuery } from '~~/shared/catalog/queryParams'
 import type {
@@ -83,12 +83,6 @@ watch(
   },
 )
 
-function catCount(slug: string): number {
-  return facets.value?.categories.find((c) => c.value === slug)?.count ?? 0
-}
-function isCatActive(slug: CategorySlug): boolean {
-  return query.value.categories?.includes(slug) ?? false
-}
 function toggleCat(slug: CategorySlug) {
   const set = new Set(query.value.categories ?? [])
   if (set.has(slug)) set.delete(slug)
@@ -258,18 +252,7 @@ function onCity(sel: { city: string; state: string } | null) {
 
     <div class="filterbar">
       <div class="filterbar__inner">
-        <div class="catpills" role="group" aria-label="Filtrar por categoria">
-          <button
-            v-for="c in CATEGORIES"
-            :key="c.slug"
-            class="catpill"
-            :aria-pressed="isCatActive(c.slug)"
-            @click="toggleCat(c.slug)"
-          >
-            <AppIcon :d="c.icon" />
-            {{ c.label }} <span class="catpill__count">{{ catCount(c.slug) }}</span>
-          </button>
-        </div>
+        <CategoryCarousel :active="query.categories" :counts="facets?.categories" @toggle="toggleCat" />
         <div class="fbar">
           <button class="btn-filters" @click="filtersOpen = true">
             <AppIcon :d="ICONS.filter" />

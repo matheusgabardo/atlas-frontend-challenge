@@ -182,9 +182,6 @@
   .search { order: 3; max-width: none; width: 100%; flex-basis: 100%; padding-bottom: var(--sp-3); }
   .citybtn span.city-label { display: none; }
   .filterbar__inner { padding: var(--sp-3) var(--sp-4); }
-  .catpills { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; margin: 0 calc(-1 * var(--sp-4)); padding: 0 var(--sp-4); }
-  .catpills::-webkit-scrollbar { display: none; }
-  .catpill { flex-shrink: 0; }
   .results { padding: var(--sp-4); }
   .grid { grid-template-columns: 1fr; }
   .card__foot .btn--primary { height: 44px; }

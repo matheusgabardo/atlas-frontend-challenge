@@ -75,9 +75,30 @@
 .filterbar { position: sticky; top: var(--header-h); z-index: 30; background: var(--header-bg); backdrop-filter: blur(14px); border-bottom: 1px solid var(--line); }
 .filterbar__inner { width: 100%; max-width: 1320px; margin: 0 auto; padding: var(--sp-4) var(--sp-6); display: flex; flex-direction: column; gap: var(--sp-3); }
 
-/* category pills */
-.catpills { display: flex; gap: var(--sp-2); flex-wrap: wrap; }
-.catpill { display: inline-flex; align-items: center; gap: var(--sp-2); height: 38px; padding: 0 var(--sp-4); border-radius: var(--r-full); border: 1px solid var(--line); background: var(--surface); font-size: var(--fs-sm); font-weight: 500; color: var(--text-2); white-space: nowrap; transition: background .12s, border-color .12s, color .12s; }
+/* category pills — single-line carousel (CategoryCarousel.vue) */
+.catbar__row { display: flex; align-items: center; gap: var(--sp-2); }
+.catpills {
+  display: flex; gap: var(--sp-2); flex-wrap: nowrap; flex: 1; min-width: 0;
+  overflow-x: auto; scroll-behavior: smooth; scrollbar-width: none; padding: 4px;
+}
+.catpills::-webkit-scrollbar { display: none; }
+.catbar.is-collapsed .catpills { display: none; }
+.catbar__nav, .catbar__toggle {
+  flex-shrink: 0; height: 38px; border-radius: var(--r-full); border: 1px solid var(--line);
+  background: var(--surface); color: var(--text-2); cursor: pointer;
+  display: inline-flex; align-items: center; justify-content: center; transition: border-color .12s, color .12s;
+}
+.catbar__nav { width: 38px; }
+.catbar__nav:hover, .catbar__toggle:hover { border-color: var(--line-2); color: var(--text); }
+.catbar__nav:disabled { opacity: .35; cursor: default; }
+.catbar__nav svg, .catbar__toggle svg { width: 16px; height: 16px; }
+.catbar__nav:focus-visible, .catbar__toggle:focus-visible { box-shadow: var(--focus-ring); }
+.catbar__toggle { gap: var(--sp-1); padding: 0 var(--sp-3); }
+.catbar__toggle-txt { font-size: var(--fs-xs); font-weight: 600; white-space: nowrap; }
+/* chevron points up while expanded (click to minimize), down while collapsed (click to open) */
+.catbar__toggle svg { transition: transform .2s; }
+.catbar:not(.is-collapsed) .catbar__toggle svg { transform: rotate(180deg); }
+.catpill { display: inline-flex; align-items: center; gap: var(--sp-2); height: 38px; padding: 0 var(--sp-4); border-radius: var(--r-full); border: 1px solid var(--line); background: var(--surface); font-size: var(--fs-sm); font-weight: 500; color: var(--text-2); white-space: nowrap; flex-shrink: 0; transition: background .12s, border-color .12s, color .12s; }
 .catpill svg { width: 16px; height: 16px; }
 .catpill:hover { border-color: var(--line-2); color: var(--text); }
 .catpill[aria-pressed="true"] { background: var(--primary); border-color: var(--primary); color: var(--on-primary); }
