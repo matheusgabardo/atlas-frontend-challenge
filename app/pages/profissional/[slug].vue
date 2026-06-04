@@ -8,11 +8,14 @@ import { catalogBackTarget } from '~/utils/backTarget'
 
 const route = useRoute()
 const router = useRouter()
+const { requestReturn } = useCatalogReturn()
 const slug = computed(() => route.params.slug as string)
 
 function goBack() {
-  // Came from the catalog → router.back() restores the exact scroll & loaded pages
-  // (docs/adr/0010). Deep link or other origin → go to a fresh catalog.
+  // Signal an explicit return so the catalog restores its scroll/highlight (docs/adr/0010).
+  requestReturn()
+  // Came from a listing → router.back() restores the exact scroll & loaded pages.
+  // Deep link or other origin → go to a fresh catalog.
   const back = import.meta.client ? (window.history.state?.back as string | undefined) : undefined
   if (catalogBackTarget(back) === 'back') router.back()
   else navigateTo('/')

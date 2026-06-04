@@ -13,7 +13,8 @@ const track = ref<HTMLElement>()
 const hasOverflow = ref(false)
 const canLeft = ref(false)
 const canRight = ref(false)
-const collapsed = ref(false)
+// useState so the collapsed state survives the page remount on a profile round-trip.
+const collapsed = useState('catalog:cat-collapsed', () => false)
 const listId = useId()
 
 function countFor(slug: string): number {

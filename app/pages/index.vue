@@ -11,8 +11,6 @@ import type {
 } from '~~/shared/types'
 import { ICONS } from '~/utils/icons'
 
-definePageMeta({ keepalive: true })
-
 useHead({ title: 'QuemFaz Eventos — encontre profissionais para o seu evento' })
 
 const { query, update, reset } = useCatalogQuery()
@@ -39,15 +37,22 @@ const { data, pending, error, refresh } = await useAsyncData<CatalogResponse>(
   { watch: [baseKey] },
 )
 
-const items = ref<CatalogResponse['items']>([])
-const page = ref(1)
+// The loaded list lives in app-level state (useState) so it survives navigating to a
+// profile and back WITHOUT relying on <KeepAlive>: the page can remount and still show
+// every "load more" page, keeping the document tall enough to restore scroll (docs/adr/0010).
+const items = useState<CatalogResponse['items']>('catalog:items', () => [])
+const page = useState('catalog:page', () => 1)
+const appliedKey = useState<string | null>('catalog:key', () => null)
 watch(
   data,
   (d) => {
-    if (d) {
-      items.value = [...d.items]
-      page.value = 1
-    }
+    if (!d) return
+    // Adopt page-1 results only when the query actually changed (or on first load); on a
+    // same-query remount/return, keep the accumulated list instead of resetting it.
+    if (appliedKey.value === baseKey.value && items.value.length) return
+    appliedKey.value = baseKey.value
+    items.value = [...d.items]
+    page.value = 1
   },
   { immediate: true },
 )
@@ -166,39 +171,46 @@ const chips = computed(() => {
   return out
 })
 
-onMounted(() => favorites.load())
-
-// Returning from a profile (docs/adr/0010). The catalog is kept alive, so the list
-// (incl. extra "load more" pages) survives. We save the scroll on leave and restore it
-// on return AFTER layout settles (two rAFs) — router scrollBehavior runs too early and
-// clamps the offset — and briefly highlight the card that was opened.
-const { consume } = useCatalogReturn()
+// Returning from a profile (docs/adr/0010): restore the catalog scroll and briefly
+// highlight the opened card. No <KeepAlive> — the list is persisted in useState (above),
+// so the page can remount and still be tall enough to restore the scroll. Scroll is
+// tracked live and saved on unmount (before the next route scrolls to top), tagged with
+// the query it belongs to, and re-applied after layout settles (two rAFs).
+const { consume, consumeReturn } = useCatalogReturn()
 const returningSlug = ref<string | null>(null)
 let returnTimer: ReturnType<typeof setTimeout> | undefined
-let savedScroll = 0
-let didLeave = false
-
-onDeactivated(() => {
-  savedScroll = window.scrollY
-  didLeave = true
-})
-
-function flagReturn() {
-  if (didLeave) {
-    didLeave = false
-    const y = savedScroll
-    requestAnimationFrame(() => requestAnimationFrame(() => window.scrollTo({ top: y })))
-  }
-  const slug = consume()
-  if (!slug) return
-  returningSlug.value = slug
-  clearTimeout(returnTimer)
-  returnTimer = setTimeout(() => {
-    if (returningSlug.value === slug) returningSlug.value = null
-  }, 1800)
+const savedScroll = useState<{ y: number; key: string | null }>('catalog:scroll', () => ({ y: 0, key: null }))
+let liveScroll = 0
+function onScroll() {
+  liveScroll = window.scrollY
 }
-onActivated(flagReturn)
-onBeforeUnmount(() => clearTimeout(returnTimer))
+
+onMounted(() => {
+  favorites.load()
+  window.addEventListener('scroll', onScroll, { passive: true })
+  // Restore scroll + highlight ONLY when arriving via the profile "back" button (not on a
+  // fresh logo/breadcrumb navigation) and for the same query we left from.
+  const isReturn = consumeReturn()
+  const slug = consume()
+  if (isReturn) {
+    if (savedScroll.value.y > 0 && savedScroll.value.key === baseKey.value) {
+      const y = savedScroll.value.y
+      requestAnimationFrame(() => requestAnimationFrame(() => window.scrollTo({ top: y })))
+    }
+    if (slug) {
+      returningSlug.value = slug
+      returnTimer = setTimeout(() => {
+        if (returningSlug.value === slug) returningSlug.value = null
+      }, 1800)
+    }
+  }
+  savedScroll.value = { y: 0, key: null } // one-shot: never re-apply a stale offset
+})
+onBeforeUnmount(() => {
+  window.removeEventListener('scroll', onScroll)
+  savedScroll.value = { y: liveScroll, key: baseKey.value }
+  clearTimeout(returnTimer)
+})
 
 function clearAll() {
   reset()
