@@ -1,6 +1,6 @@
 name: Deploy
 
-# Em push na main: builda a imagem (no CI Linux), publica no GHCR e faz deploy
+# Em push na master: builda a imagem (no CI Linux), publica no GHCR e faz deploy
 # por SSH no servidor (compose pull + up + prune). Ver docs/adr/0008.
 on:
   push:

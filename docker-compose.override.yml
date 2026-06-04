@@ -1,6 +1,4 @@
-# Dev / local — carregado automaticamente pelo `docker compose` NESTE repositório.
-# Builda a imagem localmente em vez de puxar do GHCR. NÃO vai para o servidor:
-# em produção roda apenas o docker-compose.yml (que faz `pull` da imagem do CI).
+# Dev local: builda a imagem em vez de puxar do GHCR (carregado automaticamente pelo docker compose).
 services:
   app:
     build: .
